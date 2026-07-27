@@ -1,0 +1,195 @@
+/* Landing-page-only visual calibration against public/mockups/home.jpg. */
+
+.home-page {
+  padding-top: 24px;
+}
+
+.home-page .hero-section {
+  padding-bottom: 20px;
+}
+
+.home-page .hero-section h1 {
+  max-width: 1040px;
+  margin-top: 19px;
+  margin-bottom: 14px;
+  font-size: clamp(44px, 4.25vw, 62px);
+  line-height: 1.02;
+  letter-spacing: -0.052em;
+}
+
+.home-page .hero-section > p {
+  max-width: 620px;
+  font-size: 15px;
+  line-height: 1.48;
+}
+
+.home-page .hero-actions {
+  gap: 18px;
+  margin-top: 21px;
+}
+
+.home-page .hero-actions .button {
+  min-height: 44px;
+  padding-inline: 24px;
+}
+
+.home-page .hero-workbench {
+  width: min(1228px, calc(100% - 160px));
+  min-height: 414px;
+  grid-template-columns: 46.5% 53.5%;
+  border-color: rgba(111, 79, 244, 0.78);
+  box-shadow:
+    0 34px 80px rgba(0, 0, 0, 0.42),
+    0 0 0 1px rgba(91, 71, 219, 0.08),
+    0 0 84px rgba(84, 69, 232, 0.11);
+}
+
+.home-page .window-head {
+  height: 44px;
+  padding-inline: 15px;
+}
+
+.home-page .input-window {
+  position: relative;
+}
+
+.home-page .input-window::before {
+  content: "1\A 2\A 3\A 4\A 5\A 6\A 7\A 8\A 9\A 10\A 11\A 12\A 13\A 14\A 15";
+  position: absolute;
+  z-index: 3;
+  top: 58px;
+  left: 18px;
+  width: 24px;
+  color: #59687b;
+  font: 500 12px/1.55 "JetBrains Mono", monospace;
+  text-align: right;
+  white-space: pre;
+  pointer-events: none;
+  user-select: none;
+}
+
+.home-page .input-window textarea {
+  position: relative;
+  z-index: 1;
+  height: 324px;
+  padding: 15px 20px 12px 62px;
+  background: linear-gradient(90deg, #09111c 0 47px, #223047 47px 48px, #09111c 48px);
+  color: #b7d2f8;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.home-page .window-foot {
+  min-height: 45px;
+}
+
+.home-page .analysis-panel .window-head {
+  background: #0d1521;
+}
+
+.home-page .analysis-hero {
+  min-height: 70px;
+  padding: 13px 20px 7px;
+}
+
+.home-page .analysis-logo {
+  width: 49px;
+  height: 49px;
+  border-radius: 9px;
+}
+
+.home-page .analysis-title strong {
+  font-size: 14px;
+}
+
+.home-page .analysis-title span {
+  margin-top: 6px;
+  font-size: 11px;
+}
+
+.home-page .confidence-bar {
+  height: 5px;
+  margin: 0 20px 7px 126px;
+}
+
+.home-page .facts-list {
+  margin-inline: 15px;
+}
+
+.home-page .facts-list > div {
+  min-height: 34px;
+  grid-template-columns: 145px minmax(0, 1fr);
+}
+
+.home-page .facts-list dt,
+.home-page .facts-list dd {
+  font-size: 10.5px;
+}
+
+.home-page .analysis-note {
+  min-height: 45px;
+  margin: 8px 15px 10px;
+  padding: 7px 12px;
+  font-size: 9.5px;
+}
+
+.home-page .feature-grid {
+  gap: 16px;
+  margin-top: 17px;
+}
+
+.home-page .feature-card {
+  min-height: 151px;
+  padding: 18px 20px;
+}
+
+.home-page .feature-card h3 {
+  margin-top: 5px;
+  font-size: 13px;
+}
+
+.home-page .feature-card p {
+  margin-top: 13px;
+  margin-bottom: 14px;
+  font-size: 10.5px;
+  line-height: 1.55;
+}
+
+.home-page .feature-badge {
+  font-size: 8.5px;
+}
+
+@media (max-width: 1160px) {
+  .home-page .hero-workbench {
+    width: min(100% - 48px, 1228px);
+  }
+}
+
+@media (max-width: 900px) {
+  .home-page .hero-workbench {
+    grid-template-columns: 1fr;
+  }
+
+  .home-page .input-window::before {
+    display: none;
+  }
+
+  .home-page .input-window textarea {
+    padding-left: 20px;
+    background: #09111c;
+  }
+}
+
+@media (max-width: 620px) {
+  .home-page {
+    padding-top: 28px;
+  }
+
+  .home-page .hero-section h1 {
+    font-size: 43px;
+  }
+
+  .home-page .hero-workbench {
+    width: min(100% - 28px, 1228px);
+  }
+}
