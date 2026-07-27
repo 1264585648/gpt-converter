@@ -6,16 +6,26 @@ import '../formats-calibration.css'
 import '../compare-calibration.css'
 import '../qa-fixes.css'
 import '../a11y-qa.css'
+import { siteIdentity } from '../lib/seo'
 
 interface Props {
   title?: string
   description?: string
+  canonicalPath?: string
+  ogImage?: string
+  robots?: string
 }
 
 const {
-  title = 'AuthAtlas — AI Auth Format Lab',
-  description = 'AuthAtlas — local-first AI authentication format explorer, credential inspector, and schema converter.',
+  title = 'AuthAtlas — AI Credential Inspector & Format Converter',
+  description = siteIdentity.description,
+  canonicalPath = Astro.url.pathname,
+  ogImage = '/mockups/home.jpg',
+  robots = 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1',
 } = Astro.props
+
+const canonicalUrl = Astro.site ? new URL(canonicalPath, Astro.site).toString() : undefined
+const socialImageUrl = Astro.site ? new URL(ogImage, Astro.site).toString() : ogImage
 ---
 
 <!doctype html>
@@ -25,14 +35,25 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#060914" />
     <meta name="description" content={description} />
+    <meta name="robots" content={robots} />
+
+    {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+
+    <meta property="og:site_name" content={siteIdentity.name} />
+    <meta property="og:locale" content={siteIdentity.locale} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="/mockups/home.jpg" />
+    {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
+    <meta property="og:image" content={socialImageUrl} />
+    <meta property="og:image:alt" content={`${title} preview`} />
+
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    <meta name="twitter:image" content="/mockups/home.jpg" />
+    <meta name="twitter:image" content={socialImageUrl} />
+    <meta name="twitter:image:alt" content={`${title} preview`} />
+
     <title>{title}</title>
     <script is:inline>
       const route = window.location.hash.replace(/^#\/?/, '').split('?')[0]
