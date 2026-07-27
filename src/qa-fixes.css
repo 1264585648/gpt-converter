@@ -41,6 +41,21 @@
   line-height: 1;
 }
 
+button:disabled,
+.button:disabled {
+  cursor: not-allowed !important;
+  opacity: 0.42;
+  transform: none !important;
+  filter: saturate(0.55);
+  box-shadow: none !important;
+}
+
+button:disabled:hover,
+.button:disabled:hover {
+  transform: none !important;
+  filter: saturate(0.55);
+}
+
 /* QA safety messaging: gateway targets are adapters, not authoritative schemas. */
 .compatibility-note::after {
   content: 'Gateway outputs are version-dependent adapter templates, not official provider schemas. Verify fields before import.';
