@@ -10,6 +10,11 @@ export type GuideLink = {
   href: string
 }
 
+export type GuideReference = {
+  label: string
+  url: string
+}
+
 export type Guide = {
   slug: string
   topic: 'Sub2API' | 'New API'
@@ -18,20 +23,31 @@ export type Guide = {
   directAnswer: string
   sections: GuideSection[]
   related: GuideLink[]
+  references: GuideReference[]
 }
+
+const sub2apiOfficialReferences: GuideReference[] = [
+  { label: 'Sub2API official GitHub repository — Wei-Shaw/sub2api', url: 'https://github.com/Wei-Shaw/sub2api' },
+  { label: 'Sub2API official website', url: 'https://sub2api.org/' },
+]
+
+const newApiProjectReferences: GuideReference[] = [
+  { label: 'New API official GitHub repository — QuantumNous/new-api', url: 'https://github.com/QuantumNous/new-api' },
+  { label: 'New API official project introduction', url: 'https://docs.newapi.pro/en/docs/guide/wiki/basic-concepts/project-introduction' },
+]
 
 export const guides: Guide[] = [
   {
     slug: 'sub2api-credential-fields',
     topic: 'Sub2API',
     title: 'Sub2API Credential Fields',
-    description: 'Understand the common credential fields AuthAtlas recognizes in Sub2API-style account wrappers and why exact field names must be verified against the deployed version.',
-    directAnswer: 'A Sub2API account wrapper may carry provider metadata plus upstream access-token, refresh-token, API-key, or base-URL fields. The exact schema is version-dependent, so field mapping should be verified before import.',
+    description: 'Understand the common credential fields AuthAtlas recognizes in Sub2API account/configuration data and why exact field names must be verified against the deployed version.',
+    directAnswer: 'Sub2API is an AI API gateway platform. AuthAtlas models its version-dependent account/configuration data as a container that can expose provider metadata and upstream authentication material for inspection and mapping; the exact schema must be verified against the deployed version.',
     sections: [
       {
         heading: 'Common fields AuthAtlas looks for',
-        paragraphs: ['AuthAtlas treats Sub2API as a gateway wrapper rather than a new secret type. The useful part of the wrapper is the upstream credential material already present inside it.'],
-        bullets: ['provider — identifies the upstream provider when present', 'access_token — upstream bearer or OAuth access-token material', 'refresh_token — upstream OAuth refresh-token material', 'api_key — upstream provider API-key material', 'base_url — optional upstream endpoint metadata'],
+        paragraphs: ['The upstream Sub2API project is a gateway platform rather than a credential specification. AuthAtlas therefore treats recognized account/configuration fields as an inspection model, not as a claim that every Sub2API release exposes one universal import schema.'],
+        bullets: ['provider — identifies the upstream provider when present', 'access_token — upstream bearer or OAuth access-token material when present', 'refresh_token — upstream OAuth refresh-token material when present', 'api_key — upstream provider API-key material when present', 'base_url — optional upstream endpoint metadata when present'],
       },
       {
         heading: 'Required fields depend on the adapter',
@@ -39,7 +55,7 @@ export const guides: Guide[] = [
       },
       {
         heading: 'Safe normalization example',
-        paragraphs: ['A wrapper can be normalized into Canonical format by extracting only recognized credential material and retaining source metadata.'],
+        paragraphs: ['A recognized configuration can be normalized into Canonical format by extracting only credential material that is actually present and retaining source metadata.'],
         code: '{\n  "provider": "example",\n  "access_token": "token_example_redacted",\n  "refresh_token": "refresh_example_redacted"\n}',
       },
     ],
@@ -49,18 +65,19 @@ export const guides: Guide[] = [
       { label: 'Sub2API → New API', href: '/compare/sub2api-to-new-api' },
       { label: 'Sub2API vs New API', href: '/compare/sub2api-vs-new-api' },
     ],
+    references: sub2apiOfficialReferences,
   },
   {
     slug: 'sub2api-authentication-structure',
     topic: 'Sub2API',
     title: 'Sub2API Authentication Structure',
-    description: 'Learn how AuthAtlas separates Sub2API gateway wrapper metadata from the upstream credential material used for authentication.',
-    directAnswer: 'AuthAtlas models Sub2API as a container around upstream authentication material. The gateway wrapper describes provider or account configuration, while the contained token or API key remains the credential that authorizes upstream requests.',
+    description: 'Learn how AuthAtlas separates Sub2API gateway account/configuration metadata from upstream credential material used for authentication.',
+    directAnswer: 'The official Sub2API project is an AI API gateway platform that can manage upstream account types such as OAuth and API-key based access. AuthAtlas models the gateway account/configuration layer separately from the upstream token or key so conversion does not confuse wrapper metadata with the credential itself.',
     sections: [
       {
-        heading: 'Wrapper versus credential',
-        paragraphs: ['The wrapper and the upstream credential should not be treated as the same concept. A gateway configuration can contain provider names, endpoints, account metadata, and one or more secrets.'],
-        bullets: ['Wrapper fields describe how the gateway should use an account.', 'OAuth or API-key fields carry the actual upstream authentication material.', 'Canonical normalization separates credential material from source-wrapper metadata.'],
+        heading: 'Gateway configuration versus credential',
+        paragraphs: ['The gateway configuration and the upstream credential should not be treated as the same concept. A gateway can manage account metadata, routing context, provider settings, and authentication material at the same time.'],
+        bullets: ['Gateway fields describe how the platform should use an account or provider.', 'OAuth or API-key values carry upstream authentication material.', 'Canonical normalization separates recognized credential material from source-wrapper metadata.'],
       },
       {
         heading: 'Why Canonical sits in the middle',
@@ -77,18 +94,19 @@ export const guides: Guide[] = [
       { label: 'Sub2API → Canonical', href: '/compare/sub2api-to-canonical' },
       { label: 'Refresh Token → Access Token', href: '/compare/refresh-token-to-access-token' },
     ],
+    references: sub2apiOfficialReferences,
   },
   {
     slug: 'sub2api-credential-security',
     topic: 'Sub2API',
     title: 'Sub2API Credential Security',
-    description: 'Security guidance for handling Sub2API gateway exports, upstream tokens, API keys, local conversion, and version-dependent imports.',
-    directAnswer: 'Treat a Sub2API wrapper as sensitive whenever it contains live upstream credentials. Mask secrets in previews, verify the deployed schema before import, and keep compatible conversion local when possible.',
+    description: 'Security guidance for handling Sub2API gateway account/configuration data, upstream tokens, API keys, local conversion, and version-dependent imports.',
+    directAnswer: 'Treat Sub2API account/configuration data as sensitive whenever it exposes live upstream credentials. Mask secrets in previews, verify the deployed schema before import, and keep compatible inspection or schema mapping local when possible.',
     sections: [
       {
-        heading: 'Gateway exports can be secrets',
-        paragraphs: ['A configuration file may look like ordinary JSON while still containing values that authorize upstream requests. The sensitivity comes from the contained credentials, not the file extension or wrapper name.'],
-        bullets: ['Do not paste live exports into untrusted sites.', 'Do not attach unmasked gateway exports to public issues.', 'Rotate upstream credentials after suspected exposure.'],
+        heading: 'Gateway configuration can contain secrets',
+        paragraphs: ['Configuration data may look like ordinary JSON while still containing values that authorize upstream requests. The sensitivity comes from the contained credentials, not the file extension or gateway name.'],
+        bullets: ['Do not paste live exports into untrusted sites.', 'Do not attach unmasked gateway data to public issues.', 'Rotate upstream credentials after suspected exposure.'],
       },
       {
         heading: 'Version verification is a security control',
@@ -105,26 +123,27 @@ export const guides: Guide[] = [
       { label: 'Sub2API → New API', href: '/compare/sub2api-to-new-api' },
       { label: 'Sub2API credential fields', href: '/guides/sub2api-credential-fields' },
     ],
+    references: sub2apiOfficialReferences,
   },
   {
     slug: 'new-api-channel-authentication-fields',
     topic: 'New API',
     title: 'New API Channel Authentication Fields',
-    description: 'Understand the common authentication fields AuthAtlas recognizes in New API channel configurations and why mappings are provider and version dependent.',
-    directAnswer: 'A New API channel configuration may contain channel type, provider, key, OAuth token, refresh-token, or base-URL fields. Which fields are valid depends on the provider, channel type, and deployed project version.',
+    description: 'Understand how AuthAtlas models authentication material in New API channels and why mappings are provider, channel-type, and version dependent.',
+    directAnswer: 'Official New API documentation describes channels as the core configuration unit for connecting AI providers, commonly with provider-specific API keys and optional endpoint or routing settings. AuthAtlas inspects recognized authentication material from that channel context without assuming one universal schema for every provider or version.',
     sections: [
       {
-        heading: 'Common fields AuthAtlas recognizes',
-        paragraphs: ['AuthAtlas extracts credential material only when a field is present and recognized. It does not assume every channel uses the same authentication model.'],
-        bullets: ['type — channel or adapter type', 'provider — upstream provider identity when present', 'key — provider or channel API-key material', 'access_token — upstream OAuth or bearer material', 'refresh_token — upstream OAuth refresh material', 'base_url — optional upstream endpoint metadata'],
+        heading: 'Fields AuthAtlas may recognize',
+        paragraphs: ['AuthAtlas extracts credential material only when a field is present and recognized. It does not assume every New API channel uses the same authentication model or exact field set.'],
+        bullets: ['type — channel or adapter type when present', 'provider — upstream provider identity when present', 'key — provider or channel API-key material when present', 'access_token — OAuth or bearer material when present', 'refresh_token — OAuth refresh material when present', 'base_url — optional upstream endpoint metadata'],
       },
       {
-        heading: 'Channel type changes the schema',
-        paragraphs: ['Two New API channels can require different authentication fields even inside the same deployment. A mapper therefore needs both credential detection and target-channel context.'],
+        heading: 'Channel type changes the usable schema',
+        paragraphs: ['New API supports many provider/channel types and advanced channel settings. A mapper therefore needs both credential detection and verified target-channel context instead of assuming one global set of required fields.'],
       },
       {
-        heading: 'Example channel credential shape',
-        paragraphs: ['This example is illustrative rather than a universal import schema.'],
+        heading: 'Illustrative channel credential shape',
+        paragraphs: ['This AuthAtlas example is illustrative rather than a universal New API import schema.'],
         code: '{\n  "type": "example",\n  "provider": "example",\n  "key": "key_example_redacted"\n}',
       },
     ],
@@ -134,22 +153,27 @@ export const guides: Guide[] = [
       { label: 'New API → Sub2API', href: '/compare/new-api-to-sub2api' },
       { label: 'Sub2API vs New API', href: '/compare/sub2api-vs-new-api' },
     ],
+    references: [
+      ...newApiProjectReferences,
+      { label: 'New API official channel management guide', url: 'https://docs.newapi.pro/en/docs/guide/feature-guide/admin/channel' },
+      { label: 'New API management API authentication documentation', url: 'https://docs.newapi.pro/en/docs/api/management/auth' },
+    ],
   },
   {
     slug: 'new-api-credential-structure',
     topic: 'New API',
     title: 'New API Credential Structure',
     description: 'Learn how AuthAtlas models New API channel configuration, provider metadata, upstream credentials, and Canonical normalization.',
-    directAnswer: 'AuthAtlas models New API as a channel configuration that combines routing metadata with upstream authentication material. Canonical normalization extracts recognized secrets while retaining source context for later schema mapping.',
+    directAnswer: 'New API is an AI API gateway and usage-management system whose channels connect upstream providers. AuthAtlas models channel/routing metadata separately from recognized authentication material so Canonical normalization does not mistake provider configuration for a newly issued credential.',
     sections: [
       {
         heading: 'Channel metadata and authentication material',
-        paragraphs: ['A New API channel can describe both where requests should go and how the upstream provider should be authenticated. Those concerns should remain distinguishable during conversion.'],
-        bullets: ['Channel metadata can include type, provider, endpoint, or other routing fields.', 'Authentication material can include an API key, access token, refresh token, or provider-specific secret.', 'Canonical normalization preserves known credential material without pretending unknown fields are credentials.'],
+        paragraphs: ['Official New API documentation treats a channel as the core configuration unit connecting a provider. During conversion, AuthAtlas separates routing/configuration context from any recognized secret material that may be used for upstream authentication.'],
+        bullets: ['Channel metadata can include type, provider, endpoint, priority, weight, model mapping, or other routing settings.', 'Authentication material may include an API key or another provider-specific credential supported by the deployed channel type.', 'Canonical normalization preserves known credential material without pretending unknown fields are credentials.'],
       },
       {
         heading: 'Why schema mappings are versioned',
-        paragraphs: ['Gateway projects evolve. Channel types, required fields, field names, and validation rules can change, so a static mapping should declare which target schema it was designed for.'],
+        paragraphs: ['Gateway projects evolve. Channel types, required fields, field names, validation rules, and advanced routing settings can change, so a mapping should declare which target behavior it was designed for.'],
       },
       {
         heading: 'Mapping to another gateway',
@@ -162,18 +186,22 @@ export const guides: Guide[] = [
       { label: 'New API → Canonical', href: '/compare/new-api-to-canonical' },
       { label: 'New API → Sub2API', href: '/compare/new-api-to-sub2api' },
     ],
+    references: [
+      ...newApiProjectReferences,
+      { label: 'New API official channel management guide', url: 'https://docs.newapi.pro/en/docs/guide/feature-guide/admin/channel' },
+    ],
   },
   {
     slug: 'new-api-credential-security',
     topic: 'New API',
     title: 'New API Credential Security',
-    description: 'Security guidance for New API channel exports, provider keys, OAuth tokens, masked previews, local mapping, and schema verification.',
-    directAnswer: 'Treat New API channel exports as secrets whenever they contain live provider credentials. Keep raw keys and tokens out of logs, validate mappings against the deployed version, and prefer local schema conversion for compatible fields.',
+    description: 'Security guidance for New API channel configuration, provider keys, OAuth tokens, masked previews, local mapping, and schema verification.',
+    directAnswer: 'Treat New API channel configuration as sensitive whenever it exposes live upstream provider credentials. Keep keys and tokens out of logs, validate mappings against the deployed channel behavior, and prefer local schema conversion when the required credential material is already present.',
     sections: [
       {
-        heading: 'Channel exports may authorize real upstream usage',
-        paragraphs: ['Provider keys and tokens embedded in channel configuration can have the same impact as the original credential. Exporting them into another wrapper does not reduce their sensitivity.'],
-        bullets: ['Mask provider keys and tokens by default.', 'Do not publish raw channel exports in screenshots or issue reports.', 'Rotate upstream credentials after exposure.'],
+        heading: 'Channel configuration may authorize real upstream usage',
+        paragraphs: ['A provider key or token contained in channel configuration can retain the same authority as the original credential. Moving it into another wrapper does not reduce its sensitivity.'],
+        bullets: ['Mask provider keys and tokens by default.', 'Do not publish raw channel configuration in screenshots or issue reports.', 'Rotate upstream credentials after exposure.'],
       },
       {
         heading: 'Schema validation before import',
@@ -189,6 +217,11 @@ export const guides: Guide[] = [
       { label: 'New API format overview', href: '/formats/new-api' },
       { label: 'New API → Sub2API', href: '/compare/new-api-to-sub2api' },
       { label: 'New API channel authentication fields', href: '/guides/new-api-channel-authentication-fields' },
+    ],
+    references: [
+      ...newApiProjectReferences,
+      { label: 'New API official channel management guide', url: 'https://docs.newapi.pro/en/docs/guide/feature-guide/admin/channel' },
+      { label: 'New API compliance and acceptable use policy', url: 'https://docs.newapi.pro/en/docs/legal/acceptable-use' },
     ],
   },
 ]
