@@ -1,0 +1,56 @@
+/* Accessibility and empty-state presentation for QA behaviors. */
+
+.format-list-pane[data-empty='true']::after {
+  content: 'No formats found. Try another keyword such as OAuth, API Key, Gateway, or Canonical.';
+  min-height: 180px;
+  padding: 32px 24px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  color: #8f9bad;
+  font-size: 11px;
+  line-height: 1.6;
+  border: 1px dashed #2b374c;
+  border-radius: 8px;
+  background: rgba(12, 20, 32, 0.58);
+}
+
+.format-list-item:focus-visible,
+.category-item:focus-visible,
+.path-chip:focus-visible,
+.search-box input:focus-visible,
+.selected-path > .button:focus-visible {
+  outline: 2px solid rgba(139, 92, 246, 0.82);
+  outline-offset: 2px;
+}
+
+.category-item[aria-disabled='true'] {
+  cursor: default;
+}
+
+.selected-path > .button[aria-disabled='true'] {
+  opacity: 0.42;
+  cursor: not-allowed;
+  pointer-events: none;
+  filter: saturate(0.55);
+  box-shadow: none;
+}
+
+.path-chip[aria-pressed='true'] {
+  box-shadow: 0 0 0 1px rgba(160, 127, 255, 0.85), 0 0 18px rgba(112, 79, 229, 0.16);
+}
+
+.format-list-item[aria-pressed='true'] {
+  box-shadow: 0 0 0 1px rgba(112, 79, 229, 0.46), 0 0 18px rgba(115, 80, 229, 0.08);
+}
+
+@media (max-width: 520px) {
+  .format-list-pane[data-empty='true']::after {
+    min-height: 130px;
+    padding: 24px 16px;
+  }
+
+  .search-box kbd {
+    display: none;
+  }
+}
