@@ -1,0 +1,363 @@
+/* Compare-page-only visual calibration against public/mockups/compare.jpg. */
+
+.compare-page {
+  padding-top: 0;
+}
+
+.compare-page > .content-width {
+  width: min(1228px, calc(100% - 96px));
+}
+
+.compare-page .compare-heading {
+  padding: 30px 0 18px;
+}
+
+.compare-page .compare-heading h1 {
+  margin: 0;
+  font-size: clamp(34px, 3.15vw, 44px);
+  line-height: 1.03;
+  letter-spacing: -0.048em;
+}
+
+.compare-page .compare-heading p {
+  max-width: 690px;
+  margin: 8px auto 0;
+  font-size: 12px;
+  line-height: 1.52;
+  color: #929daf;
+}
+
+.compare-page .compare-main-grid {
+  grid-template-columns: minmax(0, 1fr) 326px;
+  gap: 10px;
+}
+
+.compare-page .matrix-panel,
+.compare-page .selected-path,
+.compare-page .matrix-legend-card,
+.compare-page .info-panel {
+  border-color: #273249;
+  background: linear-gradient(180deg, #0c1420 0%, #09111b 100%);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.16);
+}
+
+.compare-page .matrix-panel,
+.compare-page .selected-path {
+  border-radius: 10px;
+}
+
+.compare-page .matrix-title,
+.compare-page .selected-head {
+  height: 42px;
+  padding-inline: 14px;
+  border-bottom-color: #263146;
+}
+
+.compare-page .matrix-title strong,
+.compare-page .selected-head strong {
+  font-size: 11px;
+  letter-spacing: -0.01em;
+}
+
+.compare-page .matrix-title span,
+.compare-page .selected-head span {
+  font-size: 8.5px;
+}
+
+.compare-page .matrix-title b {
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 8.5px;
+}
+
+.compare-page .matrix-wrap table {
+  min-width: 720px;
+}
+
+.compare-page .matrix-wrap thead th {
+  height: 52px;
+  padding: 5px 6px;
+  font-size: 8px;
+  letter-spacing: 0.01em;
+  color: #9ca7b9;
+}
+
+.compare-page .matrix-wrap tbody th,
+.compare-page .matrix-wrap tbody td {
+  height: 48px;
+  padding: 5px 6px;
+}
+
+.compare-page .matrix-wrap tbody th {
+  width: 102px;
+  padding-left: 12px;
+  font-size: 8.5px;
+}
+
+.compare-page .matrix-wrap th,
+.compare-page .matrix-wrap td {
+  border-color: #202b3c;
+}
+
+.compare-page .path-chip {
+  min-width: 60px;
+  padding: 4px 6px;
+  border-radius: 5px;
+  font-size: 7.25px;
+  line-height: 1.1;
+}
+
+.compare-page .matrix-hint {
+  margin: 9px 13px 10px;
+  font-size: 7.75px;
+  color: #68758a;
+}
+
+.compare-page .selected-path {
+  padding-bottom: 12px;
+}
+
+.compare-page .path-display {
+  padding: 15px 14px 9px;
+  grid-template-columns: 1fr 20px 1fr;
+  gap: 7px;
+}
+
+.compare-page .path-display > div {
+  grid-template-columns: 24px 1fr;
+  column-gap: 6px;
+}
+
+.compare-page .path-display > div > svg {
+  width: 20px;
+  height: 20px;
+}
+
+.compare-page .path-display > svg {
+  width: 14px;
+}
+
+.compare-page .path-display strong {
+  font-size: 9px;
+}
+
+.compare-page .path-display small {
+  margin-top: 2px;
+  font-size: 7px;
+}
+
+.compare-page .selected-path > .chip {
+  margin: 0 14px;
+  padding: 4px 7px;
+  font-size: 7.5px;
+}
+
+.compare-page .selected-path > p,
+.compare-page .selected-path h3,
+.compare-page .selected-path ul {
+  margin-left: 14px;
+  margin-right: 14px;
+}
+
+.compare-page .selected-path > p {
+  margin-top: 9px;
+  margin-bottom: 8px;
+  font-size: 8.5px;
+  line-height: 1.5;
+  color: #8f9aac;
+}
+
+.compare-page .selected-path h3 {
+  margin-top: 13px;
+  margin-bottom: 4px;
+  font-size: 9.5px;
+}
+
+.compare-page .selected-path ul {
+  margin-top: 6px;
+  margin-bottom: 7px;
+}
+
+.compare-page .selected-path li {
+  margin: 5px 0;
+  gap: 6px;
+  font-size: 7.8px;
+}
+
+.compare-page .selected-path li svg {
+  width: 12px;
+  height: 12px;
+}
+
+.compare-page .selected-path > .button {
+  min-height: 34px;
+  width: calc(100% - 28px);
+  margin: 7px 14px 0;
+  padding-inline: 12px;
+  font-size: 9px;
+}
+
+.compare-page .matrix-legend-card {
+  min-height: 58px;
+  margin-top: 9px;
+  padding: 9px 13px;
+  grid-template-columns: 54px repeat(5, 1fr);
+  gap: 9px;
+  border-radius: 9px;
+}
+
+.compare-page .matrix-legend-card > strong {
+  font-size: 9px;
+}
+
+.compare-page .legend-item {
+  gap: 6px;
+  min-width: 0;
+}
+
+.compare-page .legend-item .path-chip {
+  flex: 0 0 auto;
+  min-width: 56px;
+}
+
+.compare-page .legend-item small {
+  font-size: 6.8px;
+  line-height: 1.35;
+  color: #748094;
+}
+
+.compare-page .compare-support-grid {
+  grid-template-columns: 1.08fr 0.92fr 1fr;
+  gap: 9px;
+  margin-top: 9px;
+}
+
+.compare-page .compare-support-grid .info-panel {
+  min-height: 158px;
+  padding: 14px 15px;
+  border-radius: 9px;
+}
+
+.compare-page .compare-support-grid .support-title {
+  margin-bottom: 10px;
+  gap: 8px;
+  font-size: 10.5px;
+}
+
+.compare-page .compare-support-grid .support-title svg {
+  width: 16px;
+  height: 16px;
+}
+
+.compare-page .canonical-flow {
+  gap: 8px;
+  margin: 16px 0 11px;
+}
+
+.compare-page .canonical-flow span {
+  padding: 8px 5px;
+  border-radius: 6px;
+  font-size: 8px;
+}
+
+.compare-page .canonical-flow svg {
+  width: 13px;
+}
+
+.compare-page .compare-support-grid .info-panel p,
+.compare-page .compare-support-grid .info-panel li {
+  font-size: 8px;
+  line-height: 1.48;
+}
+
+.compare-page .compare-support-grid .info-panel a {
+  margin-top: 8px;
+  padding: 6px 8px;
+  font-size: 7.8px;
+}
+
+.compare-page .path-list-row {
+  min-height: 25px;
+  font-size: 7.8px;
+}
+
+.compare-page .path-list-row .path-chip {
+  min-width: 58px;
+  padding: 3px 5px;
+  font-size: 6.5px;
+}
+
+@media (max-width: 1160px) {
+  .compare-page > .content-width {
+    width: min(100% - 48px, 1228px);
+  }
+
+  .compare-page .compare-main-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .compare-page .selected-path {
+    min-height: 0;
+  }
+
+  .compare-page .matrix-legend-card {
+    grid-template-columns: 54px repeat(3, 1fr);
+  }
+
+  .compare-page .legend-item:nth-last-child(-n + 2) {
+    grid-column: span 1;
+  }
+}
+
+@media (max-width: 820px) {
+  .compare-page .compare-heading {
+    padding-top: 24px;
+  }
+
+  .compare-page .compare-heading h1 {
+    font-size: 36px;
+  }
+
+  .compare-page .matrix-legend-card {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .compare-page .matrix-legend-card > strong {
+    grid-column: 1 / -1;
+  }
+
+  .compare-page .compare-support-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 620px) {
+  .compare-page > .content-width {
+    width: min(100% - 28px, 1228px);
+  }
+
+  .compare-page .compare-heading h1 {
+    font-size: 32px;
+  }
+
+  .compare-page .compare-heading p {
+    font-size: 10.5px;
+  }
+
+  .compare-page .matrix-title {
+    align-items: center;
+    gap: 8px;
+  }
+
+  .compare-page .matrix-title span {
+    white-space: nowrap;
+  }
+
+  .compare-page .matrix-legend-card {
+    grid-template-columns: 1fr;
+  }
+
+  .compare-page .matrix-legend-card > strong {
+    grid-column: auto;
+  }
+}
