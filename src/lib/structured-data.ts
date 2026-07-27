@@ -6,6 +6,15 @@ export function absoluteUrl(site: URL | undefined, path: string) {
   return site ? new URL(path, site).toString() : undefined
 }
 
+function organizationIdentity(site: URL | undefined): JsonLdNode {
+  return {
+    '@type': 'Organization',
+    name: siteIdentity.name,
+    sameAs: [siteIdentity.repositoryUrl],
+    ...(site ? { url: site.toString() } : {}),
+  }
+}
+
 export function graph(nodes: JsonLdNode[]): JsonLdNode {
   return {
     '@context': 'https://schema.org',
@@ -34,6 +43,7 @@ export function websiteSchema(site: URL | undefined): JsonLdNode {
     name: siteIdentity.name,
     description: siteIdentity.description,
     inLanguage: 'en',
+    publisher: organizationIdentity(site),
     ...(site ? { url: site.toString() } : {}),
   }
 }
@@ -52,6 +62,9 @@ export function softwareApplicationSchema(
     operatingSystem: 'Web browser',
     isAccessibleForFree: true,
     inLanguage: 'en',
+    creator: organizationIdentity(site),
+    codeRepository: siteIdentity.repositoryUrl,
+    sameAs: [siteIdentity.repositoryUrl],
     ...(site ? { url: absoluteUrl(site, path) } : {}),
   }
 }
@@ -69,14 +82,8 @@ export function techArticleSchema(
     description,
     about,
     inLanguage: 'en',
-    author: {
-      '@type': 'Organization',
-      name: siteIdentity.name,
-    },
-    publisher: {
-      '@type': 'Organization',
-      name: siteIdentity.name,
-    },
+    author: organizationIdentity(site),
+    publisher: organizationIdentity(site),
     ...(site ? { url: absoluteUrl(site, path), mainEntityOfPage: absoluteUrl(site, path) } : {}),
   }
 }
