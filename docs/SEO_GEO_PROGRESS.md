@@ -23,10 +23,12 @@ Astro static site
 │   └── /guides/<slug>
 ├── Custom non-indexable 404 page
 └── React client island
-    ├── credential inspector
-    ├── converter
-    ├── formats workspace → src/content/formats.ts
-    └── compatibility matrix
+    ├── Workbench chunk
+    │   ├── credential inspector
+    │   ├── converter
+    │   └── compatibility matrix
+    └── Formats chunk
+        └── formats workspace → src/content/formats.ts
 ```
 
 The current site generates 29 indexable content/tool URLs before future guide expansion. The custom 404 page is intentionally excluded from the indexable URL count.
@@ -41,20 +43,24 @@ The current site generates 29 indexable content/tool URLs before future guide ex
 | 3 — Language and Site Identity | Complete | Primary language is English and the canonical AuthAtlas product description is centralized. |
 | 4 — SEO Metadata | Complete | Unique metadata, robots directives, canonical support, Open Graph, and Twitter Cards are generated from shared configuration. |
 | 5 — robots / Sitemap / Canonical | Code complete; deployment validation pending | `/robots.txt` and `/sitemap.xml` are generated. Set `PUBLIC_SITE_URL` in production and verify crawler access through Cloudflare/WAF. |
-| 6 — Format Content Layer | Complete for active UI | Static format pages and the interactive `/formats` workspace consume `src/content/formats.ts` for semantic format data. The obsolete legacy constants inside `App.tsx` remain only as dead-code cleanup. |
+| 6 — Format Content Layer | Complete for active UI | Static format pages and the interactive `/formats` workspace consume `src/content/formats.ts` for semantic format data. Obsolete legacy Formats code remains only as isolated source cleanup inside the workbench chunk. |
 | 7 — Individual Format Pages | Complete | Six static format documentation pages exist with definitions, facts, fields, examples, conversion notes, security, FAQ, and related links. |
 | 8 — Converter Landing Content | Complete | Persistent supported-format links, conversion-strategy explanations, local-processing guidance, and converter FAQ are present outside the React island. |
 | 9 — Compare / Conversion Pages | Complete | Eight conversion pages and three comparison pages are static, internally linked, and included in sitemap generation. |
 | 10 — Sub2API Topic Cluster | Complete | Format overview, fields, authentication structure, security, Canonical conversion, New API conversion, and comparison pages form the first focused cluster. |
 | 11 — New API Topic Cluster | Complete | Format overview, channel fields, credential structure, security, Canonical conversion, Sub2API conversion, and comparison pages form the second focused cluster. |
 | 12 — Internal Linking | Complete for current graph | Format pages link contextually into Guides, Compare pages, conversion pages, Converter, Security, and related formats. Main Home/Formats/Converter/Compare routes also surface the focused guides. |
-| 13 — Breadcrumbs | Complete for deep content | Format, Compare, and Guide detail pages expose visible breadcrumb navigation; breadcrumb hierarchy is also machine-readable. |
-| 14 — Structured Data | Complete | Home uses WebSite + SoftwareApplication, Converter uses SoftwareApplication, Security and deep documentation pages use TechArticle where appropriate, and hierarchical pages use BreadcrumbList. |
+| 13 — Breadcrumbs | Complete for current content | Format, Compare, and Guide detail pages expose visible breadcrumb navigation; the Guides index and hierarchical pages also expose machine-readable breadcrumb data. |
+| 14 — Structured Data | Complete | Home uses WebSite + SoftwareApplication, Converter uses SoftwareApplication, Security and deep documentation pages use TechArticle where appropriate, and hierarchical pages use BreadcrumbList. AuthAtlas software metadata links back to the source repository. |
 | 15 — Broader Guides | Deliberately deferred | Expand broad OAuth/authentication content after Sub2API/New API pages have been indexed and query data is available. |
-| 16 — GitHub Entity / Discovery | In progress | Canonical positioning, recommended repository description/topics, README messaging, and deployment checklist are documented. Repository-level description/topics/homepage still need to be applied in GitHub settings when supported. |
+| 16 — GitHub Entity / Discovery | In progress | Canonical positioning, recommended repository description/topics, README messaging, deployment checklist, and source-linked JSON-LD are implemented. Repository-level description/topics/homepage still need to be applied when supported and once the production URL is final. |
 | 17 — 404 / Crawl Hardening | Complete | Astro emits a top-level custom `404.html` with `noindex,follow`, no canonical URL, useful recovery links, and no structured-data inference. This disables Cloudflare Pages' SPA catch-all behavior for unknown routes. |
 | 18 — Authority / Evidence | Complete | OAuth pages cite RFC 6749; Sub2API/New API Format, Guide, Compare, and Conversion content links authoritative upstream repositories/docs and clearly distinguishes AuthAtlas modeling from upstream-defined behavior. |
-| 19+ | Not started / deployment dependent | Automated OG assets, production performance review, external authority building, Search Console iteration, and other growth work remain. |
+| 19 — Browser / Brand Discovery | Complete | Shared favicon, web manifest, application name, and source-linked SoftwareApplication/WebSite/TechArticle identity are emitted from the common layout/content layer. |
+| 20 — Route JS Splitting | Complete | Workbench and Formats React code are loaded as separate lazy chunks, so each primary route avoids eagerly loading the other workspace. |
+| 21 — SEO Regression CI | Complete | CI builds with a deterministic site origin and verifies all 29 routes, canonical tags, JSON-LD, robots, sitemap, 404 behavior, favicon/manifest, and absence of legacy hash links. |
+| 22 — Cloudflare Static Headers | Code complete; deployment validation pending | `_headers` is aligned with Astro `/_astro/*` assets, immutable hashed-asset caching, current legacy-route inline script behavior, and browser security policies. Verify final response headers after production deployment. |
+| 23+ | Deployment / data dependent | Production performance review, external authority building, Search Console iteration, automated share assets if useful, and later content expansion remain. |
 
 ## Structured data coverage
 
@@ -64,11 +70,12 @@ The current site generates 29 indexable content/tool URLs before future guide ex
 /security                 TechArticle + BreadcrumbList
 /formats/<slug>            TechArticle + BreadcrumbList
 /compare/<slug>            TechArticle + BreadcrumbList
+/guides                    BreadcrumbList
 /guides/<slug>             TechArticle + BreadcrumbList
 /404                      intentionally none
 ```
 
-Absolute structured-data URLs are emitted when `PUBLIC_SITE_URL` is configured. Local and CI builds do not invent a production origin.
+Absolute structured-data URLs are emitted when `PUBLIC_SITE_URL` is configured. CI uses a reserved test origin so generated absolute URLs can be regression-tested without pretending that test origin is the production domain.
 
 ## Current generated content URLs
 
@@ -128,6 +135,19 @@ Absolute structured-data URLs are emitted when `PUBLIC_SITE_URL` is configured. 
 - New API pages cite `QuantumNous/new-api` and official New API documentation for project positioning, channels, authentication, and security/compliance context.
 - Sub2API ↔ New API pages explicitly describe gateway-to-gateway conversion as conditional AuthAtlas schema mapping, not an upstream-defined universal conversion contract.
 
+## Automated release checks
+
+`npm run verify:seo` checks the built `dist/` output for:
+
+- all 29 required indexable routes;
+- English language declaration and page-level canonical URLs;
+- descriptions, Open Graph metadata, and JSON-LD;
+- robots.txt and sitemap coverage;
+- custom 404 `noindex,follow` behavior with no canonical;
+- favicon and web manifest output;
+- no legacy `href="#/..."` links;
+- Cloudflare `_headers` rules for Astro immutable assets and current security policies.
+
 ## Entity and deployment documentation
 
 - [`ENTITY_POSITIONING.md`](./ENTITY_POSITIONING.md) defines the canonical product description, terminology, GitHub description, topics, and messaging rules.
@@ -146,6 +166,7 @@ These cannot be completed correctly until the production domain is known:
 - Validate JSON-LD against the deployed production URLs.
 - Verify the custom 404 is served with an HTTP 404 status for unknown routes.
 - Verify Cloudflare/WAF allows intended search and AI search crawlers.
+- Verify production `_headers`, including security headers and immutable `/_astro/*` browser caching.
 - Connect Google Search Console.
 - Connect Bing Webmaster Tools.
 - Submit the sitemap.
@@ -155,7 +176,7 @@ These cannot be completed correctly until the production domain is known:
 
 Continue in this order:
 
-1. Remove the obsolete dead `formatItems` / legacy `FormatsPage` code from `App.tsx` after the replacement workspace has been exercised in deployment previews.
+1. Remove the obsolete dead `formatItems` / legacy `FormatsPage` source after the replacement workspace has been exercised in deployment previews; route splitting already prevents `/formats` from loading that old workbench chunk.
 2. Apply GitHub description/topics/homepage metadata once repository-metadata write support and the production URL are available.
-3. Run a production performance and crawlability review after Cloudflare Pages deployment.
+3. Run a production performance, response-header, and crawlability review after Cloudflare Pages deployment.
 4. Wait for initial indexing/query data before expanding broad authentication guides.
