@@ -1,0 +1,33 @@
+/* Interaction QA polish. Keep this layer small and behavior-oriented. */
+
+.head-tools button,
+.secret-row button {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: #8f9bad;
+  padding: 4px;
+  border-radius: 5px;
+  display: inline-grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.head-tools button:hover,
+.secret-row button:hover {
+  color: #eef2f8;
+  background: #162031;
+}
+
+.head-tools button:focus-visible,
+.secret-row button:focus-visible,
+.workspace-head button:focus-visible,
+.convert-button:focus-visible {
+  outline: 2px solid rgba(139, 92, 246, 0.82);
+  outline-offset: 2px;
+}
+
+.secret-row button svg {
+  width: 15px;
+  height: 15px;
+}
