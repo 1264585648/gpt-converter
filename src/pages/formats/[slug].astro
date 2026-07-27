@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro'
-import { credentialFormats, type CredentialFormat } from '../../content/formats'
+import { credentialFormats, type CredentialFormat, type FormatSlug } from '../../content/formats'
 import { breadcrumbSchema, graph, techArticleSchema } from '../../lib/structured-data'
 
 export function getStaticPaths() {
@@ -14,8 +14,56 @@ interface Props {
   format: CredentialFormat
 }
 
+type RelatedResource = {
+  href: string
+  title: string
+  description: string
+}
+
+const relatedResourcesByFormat: Record<FormatSlug, RelatedResource[]> = {
+  'access-token': [
+    { href: '/compare/access-token-vs-refresh-token', title: 'Access Token vs Refresh Token', description: 'Compare purpose, lifetime, sensitivity, and OAuth lifecycle roles.' },
+    { href: '/compare/access-token-to-canonical', title: 'Access Token → Canonical', description: 'See how existing access-token material is normalized locally.' },
+    { href: '/compare/oauth-vs-api-key', title: 'OAuth vs API Key', description: 'Understand the differences between delegated OAuth credentials and API keys.' },
+  ],
+  'refresh-token': [
+    { href: '/compare/refresh-token-to-access-token', title: 'Refresh Token → Access Token', description: 'Learn why this path requires an OAuth server exchange instead of local conversion.' },
+    { href: '/compare/refresh-token-to-canonical', title: 'Refresh Token → Canonical', description: 'Normalize refresh-token material without changing or reissuing the credential.' },
+    { href: '/compare/access-token-vs-refresh-token', title: 'Access Token vs Refresh Token', description: 'Compare lifecycle roles, exposure risk, and storage expectations.' },
+  ],
+  'api-key': [
+    { href: '/compare/api-key-to-canonical', title: 'API Key → Canonical', description: 'Normalize API-key material into the AuthAtlas intermediate representation.' },
+    { href: '/compare/oauth-vs-api-key', title: 'OAuth vs API Key', description: 'Compare issuance, identity, lifecycle, and conversion constraints.' },
+    { href: '/security', title: 'Credential Security Model', description: 'Review local processing, masking, export, and secret-handling guidance.' },
+  ],
+  sub2api: [
+    { href: '/guides/sub2api-credential-fields', title: 'Sub2API Credential Fields', description: 'Understand common upstream credential fields and version-dependent wrapper structure.' },
+    { href: '/guides/sub2api-authentication-structure', title: 'Sub2API Authentication Structure', description: 'See how provider identity and upstream credential material fit together.' },
+    { href: '/guides/sub2api-credential-security', title: 'Sub2API Credential Security', description: 'Handle gateway exports and embedded upstream secrets safely.' },
+    { href: '/compare/sub2api-to-canonical', title: 'Sub2API → Canonical', description: 'Extract compatible credential material into the AuthAtlas intermediate format.' },
+    { href: '/compare/sub2api-to-new-api', title: 'Sub2API → New API', description: 'Review the version-aware schema-mapping path between gateway wrappers.' },
+    { href: '/compare/sub2api-vs-new-api', title: 'Sub2API vs New API', description: 'Compare gateway roles, credential fields, and compatibility constraints.' },
+  ],
+  'new-api': [
+    { href: '/guides/new-api-channel-authentication-fields', title: 'New API Channel Authentication Fields', description: 'Understand provider/channel authentication fields and version-dependent differences.' },
+    { href: '/guides/new-api-credential-structure', title: 'New API Credential Structure', description: 'See how channel configuration carries upstream credential material.' },
+    { href: '/guides/new-api-credential-security', title: 'New API Credential Security', description: 'Review safe handling for channel exports, keys, tokens, and logs.' },
+    { href: '/compare/new-api-to-canonical', title: 'New API → Canonical', description: 'Extract compatible upstream credential material into Canonical Format.' },
+    { href: '/compare/new-api-to-sub2api', title: 'New API → Sub2API', description: 'Review the version-aware schema-mapping path to a Sub2API wrapper.' },
+    { href: '/compare/sub2api-vs-new-api', title: 'Sub2API vs New API', description: 'Compare gateway roles, credential fields, and compatibility constraints.' },
+  ],
+  canonical: [
+    { href: '/compare/access-token-to-canonical', title: 'Access Token → Canonical', description: 'Normalize existing access-token material through the common intermediate model.' },
+    { href: '/compare/refresh-token-to-canonical', title: 'Refresh Token → Canonical', description: 'Normalize refresh-token material without performing an OAuth exchange.' },
+    { href: '/compare/api-key-to-canonical', title: 'API Key → Canonical', description: 'Represent API-key material in the provider-agnostic Canonical schema.' },
+    { href: '/compare/sub2api-to-canonical', title: 'Sub2API → Canonical', description: 'Extract supported upstream credentials from a gateway wrapper.' },
+    { href: '/compare/new-api-to-canonical', title: 'New API → Canonical', description: 'Extract supported channel credential material into the shared model.' },
+  ],
+}
+
 const { format } = Astro.props
 const related = credentialFormats.filter((entry) => entry.slug !== format.slug).slice(0, 4)
+const relatedResources = relatedResourcesByFormat[format.slug]
 const questionTitle = format.slug === 'access-token' || format.slug === 'api-key'
   ? `What Is an ${format.title}?`
   : format.slug === 'refresh-token'
@@ -51,8 +99,8 @@ const structuredData = graph([
           <a class="active" href="/formats">Formats</a>
           <a href="/converter">Converter</a>
           <a href="/compare">Compare</a>
+          <a href="/guides">Guides</a>
           <a href="/security">Security</a>
-          <a href="https://github.com/1264585648/gpt-converter#readme">Docs</a>
           <a href="https://github.com/1264585648/gpt-converter">GitHub</a>
         </nav>
       </div>
@@ -133,6 +181,18 @@ const structuredData = graph([
           </div>
         </section>
 
+        <section aria-labelledby="related-resources">
+          <h2 id="related-resources">Related guides and conversion paths</h2>
+          <div class="related-grid">
+            {relatedResources.map((resource) => (
+              <a href={resource.href}>
+                <strong>{resource.title}</strong>
+                <span>{resource.description}</span>
+              </a>
+            ))}
+          </div>
+        </section>
+
         <section aria-labelledby="related-formats">
           <h2 id="related-formats">Related credential formats</h2>
           <div class="related-grid">
@@ -162,7 +222,7 @@ const structuredData = graph([
       <div class="content-width footer-inner">
         <a class="brand" href="/">AuthAtlas</a>
         <p>Local-first AI credential inspection and format conversion.</p>
-        <nav><a href="/formats">All formats</a><a href="/security">Security</a></nav>
+        <nav><a href="/formats">All formats</a><a href="/guides">Guides</a><a href="/security">Security</a></nav>
       </div>
     </footer>
   </div>
@@ -187,6 +247,7 @@ const structuredData = graph([
   .step-grid, .related-grid, .faq-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1rem; }
   .step-grid article, .faq-list article, .related-grid a { padding: 1.25rem; border: 1px solid rgba(255,255,255,.08); border-radius: 14px; background: rgba(255,255,255,.025); }
   .related-grid a { display: flex; flex-direction: column; gap: .5rem; color: inherit; text-decoration: none; }
+  .related-grid a:hover { border-color: rgba(169,156,255,.42); background: rgba(169,156,255,.055); }
   .related-grid span { color: #8f9ab1; line-height: 1.5; }
   .two-column { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: 2rem; align-items: start; }
   .field-list, .security-list, .reference-list { padding-left: 1.2rem; }
