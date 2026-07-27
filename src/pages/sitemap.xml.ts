@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro'
+import { credentialFormats } from '../content/formats'
 import { pageSeo } from '../lib/seo'
 
 export const prerender = true
@@ -13,8 +14,13 @@ function escapeXml(value: string) {
 }
 
 export const GET: APIRoute = ({ site }) => {
+  const paths = [
+    ...Object.values(pageSeo).map(({ path }) => path),
+    ...credentialFormats.map(({ slug }) => `/formats/${slug}`),
+  ]
+
   const urls = site
-    ? Object.values(pageSeo).map(({ path }) => new URL(path, site).toString())
+    ? paths.map((path) => new URL(path, site).toString())
     : []
 
   const entries = urls
