@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro'
 import { comparePages } from '../content/compare'
 import { credentialFormats } from '../content/formats'
+import { guides } from '../content/guides'
 import { pageSeo } from '../lib/seo'
 
 export const prerender = true
@@ -19,6 +20,8 @@ export const GET: APIRoute = ({ site }) => {
     ...Object.values(pageSeo).map(({ path }) => path),
     ...credentialFormats.map(({ slug }) => `/formats/${slug}`),
     ...comparePages.map(({ slug }) => `/compare/${slug}`),
+    '/guides',
+    ...guides.map(({ slug }) => `/guides/${slug}`),
   ]
 
   const urls = site
