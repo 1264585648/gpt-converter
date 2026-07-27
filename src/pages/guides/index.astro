@@ -1,9 +1,16 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import { guides } from '../../content/guides'
+import { breadcrumbSchema, graph } from '../../lib/structured-data'
 
 const sub2apiGuides = guides.filter((guide) => guide.topic === 'Sub2API')
 const newApiGuides = guides.filter((guide) => guide.topic === 'New API')
+const structuredData = graph([
+  breadcrumbSchema(Astro.site, [
+    { name: 'Home', path: '/' },
+    { name: 'Guides', path: '/guides' },
+  ]),
+])
 ---
 
 <BaseLayout
@@ -11,6 +18,7 @@ const newApiGuides = guides.filter((guide) => guide.topic === 'New API')
   description="Developer guides for Sub2API and New API credential fields, authentication structure, gateway mapping, and credential security."
   canonicalPath="/guides"
   ogImage="/mockups/formats.jpg"
+  structuredData={structuredData}
 >
   <div class="app-shell guides-index-page">
     <header class="topbar"><div class="nav-inner"><a class="brand" href="/" aria-label="AuthAtlas home"><span class="brand-glyph"><i></i><b></b></span><span>AuthAtlas</span></a><nav class="nav-links"><a href="/formats">Formats</a><a href="/converter">Converter</a><a href="/compare">Compare</a><a href="/security">Security</a><a class="active" href="/guides">Guides</a><a href="https://github.com/1264585648/gpt-converter">GitHub</a></nav></div></header>
