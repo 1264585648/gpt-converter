@@ -28,7 +28,7 @@ Astro static site
     └── compatibility matrix
 ```
 
-After the Phase 10/11 topic-cluster work, the site generates 29 indexable content/tool URLs before future guide expansion.
+The current site generates 29 indexable content/tool URLs before future guide expansion.
 
 ## Phase status
 
@@ -47,7 +47,23 @@ After the Phase 10/11 topic-cluster work, the site generates 29 indexable conten
 | 10 — Sub2API Topic Cluster | Complete | Format overview, fields, authentication structure, security, Canonical conversion, New API conversion, and comparison pages form the first focused cluster. |
 | 11 — New API Topic Cluster | Complete | Format overview, channel fields, credential structure, security, Canonical conversion, Sub2API conversion, and comparison pages form the second focused cluster. |
 | 12 — Internal Linking | In progress | Format, Compare, Converter, and Guide pages link across major intent transitions; further contextual linking can be added as content expands. |
-| 13+ | Not started | Breadcrumb schema, structured data, broader guides, GitHub entity work, OG automation, performance work, external authority, and Search Console iteration remain. |
+| 13 — Breadcrumbs | Complete for deep content | Format, Compare, and Guide detail pages expose visible breadcrumb navigation; breadcrumb hierarchy is also machine-readable. |
+| 14 — Structured Data | Complete | Home uses WebSite + SoftwareApplication, Converter uses SoftwareApplication, Security and deep documentation pages use TechArticle where appropriate, and hierarchical pages use BreadcrumbList. |
+| 15 — Broader Guides | Deliberately deferred | Expand broad OAuth/authentication content after Sub2API/New API pages have been indexed and query data is available. |
+| 16+ | Not started / deployment dependent | GitHub entity metadata, automated OG assets, performance review, external authority, Search Console iteration, and other growth work remain. |
+
+## Structured data coverage
+
+```text
+/                         WebSite + SoftwareApplication
+/converter                SoftwareApplication + BreadcrumbList
+/security                 TechArticle + BreadcrumbList
+/formats/<slug>            TechArticle + BreadcrumbList
+/compare/<slug>            TechArticle + BreadcrumbList
+/guides/<slug>             TechArticle + BreadcrumbList
+```
+
+Absolute structured-data URLs are emitted when `PUBLIC_SITE_URL` is configured. Local and CI builds do not invent a production origin.
 
 ## Current generated content URLs
 
@@ -108,6 +124,7 @@ These cannot be completed correctly until the production domain is known:
 - Verify canonical URLs use the production origin.
 - Verify `/robots.txt` includes the production sitemap URL.
 - Verify `/sitemap.xml` contains all generated production URLs.
+- Validate JSON-LD against the deployed production URLs.
 - Verify Cloudflare/WAF allows intended search and AI search crawlers.
 - Connect Google Search Console.
 - Connect Bing Webmaster Tools.
@@ -116,9 +133,9 @@ These cannot be completed correctly until the production domain is known:
 
 ## Next implementation target
 
-Continue with Phase 12–15 in this order:
+Continue in this order:
 
-1. Finish contextual internal links and remove remaining duplicated React format data.
-2. Add visible breadcrumbs consistently across static content pages.
-3. Add `BreadcrumbList`, `WebSite`, `SoftwareApplication`, and `TechArticle` structured data where appropriate.
-4. Expand general authentication guides only after Sub2API/New API pages have been indexed and initial query data is available.
+1. Remove the remaining duplicated format content in the React workspace so static docs and interactive UI share one source of truth.
+2. Improve GitHub entity/discovery signals and connect the production website URL once the domain is final.
+3. Run a production performance and crawlability review after Cloudflare Pages deployment.
+4. Wait for initial indexing/query data before expanding broad authentication guides.
