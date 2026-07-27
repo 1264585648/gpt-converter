@@ -1,6 +1,8 @@
-import App from '../App'
+import { lazy, Suspense } from 'react'
 import QaSafetyBoundary from '../QaSafetyBoundary'
-import FormatsWorkspace from './FormatsWorkspace'
+
+const WorkbenchApp = lazy(() => import('../App'))
+const FormatsWorkspace = lazy(() => import('./FormatsWorkspace'))
 
 function isFormatsRoute() {
   if (typeof window === 'undefined') return false
@@ -15,9 +17,13 @@ function isFormatsRoute() {
 }
 
 export default function ClientApp() {
+  const formatsRoute = isFormatsRoute()
+
   return (
     <QaSafetyBoundary>
-      {isFormatsRoute() ? <FormatsWorkspace /> : <App />}
+      <Suspense fallback={null}>
+        {formatsRoute ? <FormatsWorkspace /> : <WorkbenchApp />}
+      </Suspense>
     </QaSafetyBoundary>
   )
 }
