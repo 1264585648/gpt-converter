@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import { credentialFormats, type CredentialFormat } from '../../content/formats'
+import { breadcrumbSchema, graph, techArticleSchema } from '../../lib/structured-data'
 
 export function getStaticPaths() {
   return credentialFormats.map((format) => ({
@@ -15,11 +16,24 @@ interface Props {
 
 const { format } = Astro.props
 const related = credentialFormats.filter((entry) => entry.slug !== format.slug).slice(0, 4)
+const questionTitle = format.slug === 'access-token' || format.slug === 'api-key'
+  ? `What Is an ${format.title}?`
+  : format.slug === 'refresh-token'
+    ? 'What Is a Refresh Token?'
+    : `What Is ${format.title}?`
 const title = format.slug === 'canonical'
   ? 'AuthAtlas Canonical Credential Format — Fields & Conversion | AuthAtlas'
-  : `What Is a ${format.title}? Fields, Security & Conversion | AuthAtlas`
+  : `${questionTitle} Fields, Security & Conversion | AuthAtlas`
 const description = `${format.shortDescription} Learn its fields, lifecycle, security considerations, and supported credential conversion paths.`
 const canonicalPath = `/formats/${format.slug}`
+const structuredData = graph([
+  techArticleSchema(Astro.site, canonicalPath, questionTitle, description, [format.title, 'authentication credentials', 'credential conversion']),
+  breadcrumbSchema(Astro.site, [
+    { name: 'Home', path: '/' },
+    { name: 'Formats', path: '/formats' },
+    { name: format.title, path: canonicalPath },
+  ]),
+])
 ---
 
 <BaseLayout
@@ -27,6 +41,7 @@ const canonicalPath = `/formats/${format.slug}`
   description={description}
   canonicalPath={canonicalPath}
   ogImage="/mockups/formats.jpg"
+  structuredData={structuredData}
 >
   <div class="app-shell format-doc-page">
     <header class="topbar">

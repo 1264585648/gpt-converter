@@ -4,6 +4,14 @@ import BaseLayout from '../layouts/BaseLayout.astro'
 import RouteSeoContent from './RouteSeoContent.astro'
 import StaticPageFallback from './StaticPageFallback.astro'
 import { pageSeo, type PageKey } from '../lib/seo'
+import {
+  breadcrumbSchema,
+  graph,
+  softwareApplicationSchema,
+  techArticleSchema,
+  websiteSchema,
+  type JsonLdNode,
+} from '../lib/structured-data'
 
 interface Props {
   page: PageKey
@@ -12,6 +20,34 @@ interface Props {
 const { page } = Astro.props
 const seo = pageSeo[page]
 const hasPersistentContent = page === 'home' || page === 'formats' || page === 'converter' || page === 'compare'
+
+const breadcrumb = page === 'home'
+  ? undefined
+  : breadcrumbSchema(Astro.site, [
+      { name: 'Home', path: '/' },
+      { name: page === 'converter' ? 'Converter' : page === 'formats' ? 'Formats' : page === 'compare' ? 'Compare' : 'Security', path: seo.path },
+    ])
+
+let structuredData: JsonLdNode
+
+if (page === 'home') {
+  structuredData = graph([
+    websiteSchema(Astro.site),
+    softwareApplicationSchema(Astro.site, '/', 'AuthAtlas', seo.description),
+  ])
+} else if (page === 'converter') {
+  structuredData = graph([
+    softwareApplicationSchema(Astro.site, seo.path, 'AuthAtlas AI Credential Converter', seo.description),
+    breadcrumb!,
+  ])
+} else if (page === 'security') {
+  structuredData = graph([
+    techArticleSchema(Astro.site, seo.path, 'AuthAtlas Local-first Credential Security', seo.description, ['credential security', 'local processing', 'OAuth exchange']),
+    breadcrumb!,
+  ])
+} else {
+  structuredData = graph([breadcrumb!])
+}
 ---
 
 <BaseLayout
@@ -20,6 +56,7 @@ const hasPersistentContent = page === 'home' || page === 'formats' || page === '
   canonicalPath={seo.path}
   ogImage={seo.ogImage}
   robots={seo.robots}
+  structuredData={structuredData}
 >
   <ClientApp client:only="react">
     <StaticPageFallback page={page} slot="fallback" />
