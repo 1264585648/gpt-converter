@@ -1,0 +1,101 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+---
+
+<BaseLayout
+  title="Page Not Found | AuthAtlas"
+  description="The requested AuthAtlas page could not be found. Continue to the credential converter, authentication format documentation, comparison guides, or developer guides."
+  canonicalPath={null}
+  robots="noindex,follow,max-image-preview:large"
+>
+  <div class="app-shell not-found-page">
+    <header class="topbar">
+      <div class="nav-inner">
+        <a class="brand" href="/" aria-label="AuthAtlas home">
+          <span class="brand-glyph"><i></i><b></b></span>
+          <span>AuthAtlas</span>
+        </a>
+        <nav class="nav-links" aria-label="Main navigation">
+          <a href="/formats">Formats</a>
+          <a href="/converter">Converter</a>
+          <a href="/compare">Compare</a>
+          <a href="/guides">Guides</a>
+          <a href="/security">Security</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="page-shell not-found-main">
+      <section class="content-width not-found-hero">
+        <span class="not-found-code">404</span>
+        <h1>This credential path does not exist.</h1>
+        <p>
+          The URL may be outdated or mistyped. Use one of the main AuthAtlas resources below to continue inspecting,
+          comparing, or learning about AI credential formats.
+        </p>
+        <div class="not-found-actions">
+          <a class="button primary" href="/converter">Open Credential Converter</a>
+          <a class="button secondary" href="/formats">Browse Credential Formats</a>
+        </div>
+      </section>
+
+      <section class="content-width not-found-grid" aria-labelledby="continue-heading">
+        <div class="not-found-heading">
+          <span class="knowledge-pill">Continue exploring</span>
+          <h2 id="continue-heading">Useful AuthAtlas destinations</h2>
+        </div>
+        <div class="not-found-links">
+          <a href="/formats/refresh-token">
+            <strong>Refresh Token</strong>
+            <span>Lifecycle, security, fields, and OAuth exchange behavior.</span>
+          </a>
+          <a href="/formats/sub2api">
+            <strong>Sub2API</strong>
+            <span>Gateway credential wrapper structure and conversion limits.</span>
+          </a>
+          <a href="/formats/new-api">
+            <strong>New API</strong>
+            <span>Channel credential fields and version-aware mapping guidance.</span>
+          </a>
+          <a href="/compare/sub2api-vs-new-api">
+            <strong>Sub2API vs New API</strong>
+            <span>Compare gateway credential roles, fields, and compatibility.</span>
+          </a>
+          <a href="/guides">
+            <strong>Developer Guides</strong>
+            <span>Focused documentation for credential fields, structure, and security.</span>
+          </a>
+          <a href="/security">
+            <strong>Security Model</strong>
+            <span>Understand which AuthAtlas operations stay local in the browser.</span>
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="content-width footer-inner">
+        <a class="brand" href="/">AuthAtlas</a>
+        <p>Local-first AI credential inspection and format conversion.</p>
+        <nav><a href="/formats">Formats</a><a href="/security">Security</a></nav>
+      </div>
+    </footer>
+  </div>
+</BaseLayout>
+
+<style>
+  .not-found-main { min-height: 70vh; padding-bottom: 5rem; }
+  .not-found-hero { max-width: 900px; padding-top: 7rem; padding-bottom: 5rem; }
+  .not-found-code { display: inline-block; font: 700 .8rem/1 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .18em; color: #a99cff; border: 1px solid rgba(169,156,255,.3); border-radius: 999px; padding: .55rem .8rem; background: rgba(169,156,255,.07); }
+  .not-found-hero h1 { max-width: 760px; margin: 1.3rem 0 1rem; font-size: clamp(2.8rem, 7vw, 5.6rem); line-height: .98; letter-spacing: -.05em; }
+  .not-found-hero p { max-width: 720px; color: #9ca7bd; font-size: 1.05rem; line-height: 1.75; }
+  .not-found-actions { display: flex; gap: .85rem; flex-wrap: wrap; margin-top: 2rem; }
+  .not-found-grid { padding-top: 2rem; }
+  .not-found-heading { max-width: 720px; margin-bottom: 1.5rem; }
+  .not-found-heading h2 { margin: .9rem 0 0; font-size: clamp(1.8rem, 4vw, 2.5rem); letter-spacing: -.03em; }
+  .not-found-links { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1rem; }
+  .not-found-links a { display: flex; flex-direction: column; gap: .55rem; padding: 1.25rem; border: 1px solid rgba(255,255,255,.08); border-radius: 14px; background: rgba(255,255,255,.025); color: inherit; text-decoration: none; }
+  .not-found-links a:hover { border-color: rgba(169,156,255,.42); background: rgba(169,156,255,.055); }
+  .not-found-links span { color: #8f9ab1; line-height: 1.55; }
+  @media (max-width: 760px) { .not-found-hero { padding-top: 4rem; } }
+</style>

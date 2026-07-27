@@ -21,6 +21,7 @@ Astro static site
 ├── Topic guides
 │   ├── /guides
 │   └── /guides/<slug>
+├── Custom non-indexable 404 page
 └── React client island
     ├── credential inspector
     ├── converter
@@ -28,7 +29,7 @@ Astro static site
     └── compatibility matrix
 ```
 
-The current site generates 29 indexable content/tool URLs before future guide expansion.
+The current site generates 29 indexable content/tool URLs before future guide expansion. The custom 404 page is intentionally excluded from the indexable URL count.
 
 ## Phase status
 
@@ -51,7 +52,8 @@ The current site generates 29 indexable content/tool URLs before future guide ex
 | 14 — Structured Data | Complete | Home uses WebSite + SoftwareApplication, Converter uses SoftwareApplication, Security and deep documentation pages use TechArticle where appropriate, and hierarchical pages use BreadcrumbList. |
 | 15 — Broader Guides | Deliberately deferred | Expand broad OAuth/authentication content after Sub2API/New API pages have been indexed and query data is available. |
 | 16 — GitHub Entity / Discovery | In progress | Canonical positioning, recommended repository description/topics, README messaging, and deployment checklist are documented. Repository-level description/topics/homepage still need to be applied in GitHub settings when supported. |
-| 17+ | Not started / deployment dependent | Automated OG assets, production performance review, external authority, Search Console iteration, and other growth work remain. |
+| 17 — 404 / Crawl Hardening | Complete | Astro now emits a top-level custom `404.html` with `noindex,follow`, no canonical URL, useful recovery links, and no structured-data inference. This also disables Cloudflare Pages' SPA catch-all behavior for unknown routes. |
+| 18+ | Not started / deployment dependent | Automated OG assets, production performance review, external authority, Search Console iteration, and other growth work remain. |
 
 ## Structured data coverage
 
@@ -62,6 +64,7 @@ The current site generates 29 indexable content/tool URLs before future guide ex
 /formats/<slug>            TechArticle + BreadcrumbList
 /compare/<slug>            TechArticle + BreadcrumbList
 /guides/<slug>             TechArticle + BreadcrumbList
+/404                      intentionally none
 ```
 
 Absolute structured-data URLs are emitted when `PUBLIC_SITE_URL` is configured. Local and CI builds do not invent a production origin.
@@ -133,6 +136,7 @@ These cannot be completed correctly until the production domain is known:
 - Verify `/robots.txt` includes the production sitemap URL.
 - Verify `/sitemap.xml` contains all generated production URLs.
 - Validate JSON-LD against the deployed production URLs.
+- Verify the custom 404 is served with an HTTP 404 status for unknown routes.
 - Verify Cloudflare/WAF allows intended search and AI search crawlers.
 - Connect Google Search Console.
 - Connect Bing Webmaster Tools.
