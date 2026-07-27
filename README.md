@@ -148,6 +148,7 @@ No Cloudflare SSR adapter is required for the current architecture because crede
 
 - [`docs/SEO_GEO_ROADMAP.md`](docs/SEO_GEO_ROADMAP.md) — full SEO + GEO implementation roadmap
 - [`docs/SEO_GEO_PROGRESS.md`](docs/SEO_GEO_PROGRESS.md) — current implementation and deployment status
+- [`docs/SEO_DEPLOYMENT_CHECKLIST.md`](docs/SEO_DEPLOYMENT_CHECKLIST.md) — production-domain, crawler, sitemap, Search Console, Bing, and launch-baseline checklist
 - [`docs/ENTITY_POSITIONING.md`](docs/ENTITY_POSITIONING.md) — canonical AuthAtlas entity, terminology, GitHub description, and recommended topics
 - [`docs/UI_DESIGN_SPEC.md`](docs/UI_DESIGN_SPEC.md) — frontend implementation specification
 
