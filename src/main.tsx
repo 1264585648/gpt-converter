@@ -8,6 +8,7 @@ import './converter-calibration.css'
 import './formats-calibration.css'
 import './compare-calibration.css'
 import './qa-fixes.css'
+import './a11y-qa.css'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
