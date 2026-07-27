@@ -1,0 +1,19 @@
+---
+import App from '../App'
+import BaseLayout from '../layouts/BaseLayout.astro'
+import StaticPageFallback from './StaticPageFallback.astro'
+
+interface Props {
+  page: 'home' | 'converter' | 'formats' | 'compare' | 'security'
+  title: string
+  description: string
+}
+
+const { page, title, description } = Astro.props
+---
+
+<BaseLayout title={title} description={description}>
+  <App client:only="react">
+    <StaticPageFallback page={page} slot="fallback" />
+  </App>
+</BaseLayout>
