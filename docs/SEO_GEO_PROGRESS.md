@@ -47,13 +47,14 @@ The current site generates 29 indexable content/tool URLs before future guide ex
 | 9 — Compare / Conversion Pages | Complete | Eight conversion pages and three comparison pages are static, internally linked, and included in sitemap generation. |
 | 10 — Sub2API Topic Cluster | Complete | Format overview, fields, authentication structure, security, Canonical conversion, New API conversion, and comparison pages form the first focused cluster. |
 | 11 — New API Topic Cluster | Complete | Format overview, channel fields, credential structure, security, Canonical conversion, Sub2API conversion, and comparison pages form the second focused cluster. |
-| 12 — Internal Linking | Complete for current graph | Format pages now link contextually into relevant Guides, Compare pages, conversion pages, Converter, Security, and related formats. Continue extending the graph only when new content is added. |
+| 12 — Internal Linking | Complete for current graph | Format pages link contextually into Guides, Compare pages, conversion pages, Converter, Security, and related formats. Main Home/Formats/Converter/Compare routes also surface the focused guides. |
 | 13 — Breadcrumbs | Complete for deep content | Format, Compare, and Guide detail pages expose visible breadcrumb navigation; breadcrumb hierarchy is also machine-readable. |
 | 14 — Structured Data | Complete | Home uses WebSite + SoftwareApplication, Converter uses SoftwareApplication, Security and deep documentation pages use TechArticle where appropriate, and hierarchical pages use BreadcrumbList. |
 | 15 — Broader Guides | Deliberately deferred | Expand broad OAuth/authentication content after Sub2API/New API pages have been indexed and query data is available. |
 | 16 — GitHub Entity / Discovery | In progress | Canonical positioning, recommended repository description/topics, README messaging, and deployment checklist are documented. Repository-level description/topics/homepage still need to be applied in GitHub settings when supported. |
 | 17 — 404 / Crawl Hardening | Complete | Astro emits a top-level custom `404.html` with `noindex,follow`, no canonical URL, useful recovery links, and no structured-data inference. This disables Cloudflare Pages' SPA catch-all behavior for unknown routes. |
-| 18+ | Not started / deployment dependent | Automated OG assets, production performance review, external authority, Search Console iteration, and other growth work remain. |
+| 18 — Authority / Evidence | Complete | OAuth pages cite RFC 6749; Sub2API/New API Format, Guide, Compare, and Conversion content links authoritative upstream repositories/docs and clearly distinguishes AuthAtlas modeling from upstream-defined behavior. |
+| 19+ | Not started / deployment dependent | Automated OG assets, production performance review, external authority building, Search Console iteration, and other growth work remain. |
 
 ## Structured data coverage
 
@@ -119,6 +120,13 @@ Absolute structured-data URLs are emitted when `PUBLIC_SITE_URL` is configured. 
 /guides/new-api-credential-structure
 /guides/new-api-credential-security
 ```
+
+## Authority / evidence coverage
+
+- Access Token, Refresh Token, OAuth comparisons, and Refresh Token → Access Token cite RFC 6749.
+- Sub2API pages identify the upstream project as `Wei-Shaw/sub2api` and separate official gateway positioning from AuthAtlas's account/configuration modeling abstraction.
+- New API pages cite `QuantumNous/new-api` and official New API documentation for project positioning, channels, authentication, and security/compliance context.
+- Sub2API ↔ New API pages explicitly describe gateway-to-gateway conversion as conditional AuthAtlas schema mapping, not an upstream-defined universal conversion contract.
 
 ## Entity and deployment documentation
 
