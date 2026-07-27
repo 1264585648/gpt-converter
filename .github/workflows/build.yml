@@ -32,3 +32,6 @@ jobs:
 
       - name: Verify SEO output
         run: npm run verify:seo
+
+      - name: Verify performance budgets
+        run: npm run verify:performance
