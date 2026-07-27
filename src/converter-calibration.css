@@ -1,0 +1,353 @@
+/* Converter-page-only visual calibration against public/mockups/converter.jpg. */
+
+.converter-page .content-width {
+  width: min(1218px, calc(100% - 96px));
+}
+
+.converter-page .page-heading {
+  padding-top: 16px;
+}
+
+.converter-page .converter-heading {
+  min-height: 104px;
+  align-items: flex-start;
+}
+
+.converter-page .breadcrumb {
+  gap: 6px;
+  font-size: 9px;
+}
+
+.converter-page .breadcrumb svg {
+  width: 10px;
+  height: 10px;
+}
+
+.converter-page h1 {
+  margin-top: 7px;
+  margin-bottom: 5px;
+  font-size: 35px;
+  line-height: 1;
+  letter-spacing: -0.045em;
+}
+
+.converter-page .converter-heading p {
+  max-width: 520px;
+  margin: 0;
+  font-size: 10.5px;
+  line-height: 1.45;
+}
+
+.converter-page .converter-heading .local-badge {
+  min-height: 30px;
+  margin-top: 4px;
+  padding-inline: 12px;
+  font-size: 10px;
+}
+
+.converter-page .conversion-strip {
+  min-height: 52px;
+  margin-top: 10px;
+  padding: 6px 8px;
+  grid-template-columns: 1.3fr 0.8fr 14px 1fr 14px 126px;
+  gap: 8px;
+  border-radius: 8px;
+}
+
+.converter-page .format-select small {
+  margin-bottom: 4px;
+  font-size: 8px;
+}
+
+.converter-page .format-select strong,
+.converter-page .detected-chip {
+  height: 31px;
+  border-radius: 6px;
+  font-size: 9.5px;
+}
+
+.converter-page .format-select strong {
+  padding-inline: 9px;
+}
+
+.converter-page .detected-chip {
+  gap: 6px;
+}
+
+.converter-page .detected-chip svg,
+.converter-page .format-select svg,
+.converter-page .strip-arrow {
+  width: 13px;
+  height: 13px;
+}
+
+.converter-page .convert-button {
+  min-width: 126px;
+  min-height: 33px;
+  padding-inline: 14px;
+  font-size: 10px;
+  border-radius: 6px;
+}
+
+.converter-page .converter-workspace {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 260px;
+  gap: 7px;
+  margin-top: 8px;
+}
+
+.converter-page .workspace-card {
+  min-height: 376px;
+  border-radius: 7px;
+}
+
+.converter-page .workspace-head {
+  height: 37px;
+  padding-inline: 10px;
+}
+
+.converter-page .workspace-head strong {
+  gap: 7px;
+  font-size: 9.5px;
+}
+
+.converter-page .workspace-head button {
+  padding: 5px 6px;
+  gap: 5px;
+  font-size: 8.5px;
+}
+
+.converter-page .workspace-head svg {
+  width: 12px;
+  height: 12px;
+}
+
+.converter-page .input-card textarea,
+.converter-page .code-block {
+  height: 303px;
+}
+
+.converter-page .input-card textarea {
+  padding: 12px 13px 12px 45px;
+  background: linear-gradient(90deg, #09111c 0 35px, #1b2534 35px 36px, #09111c 36px);
+  font-size: 9.2px;
+  line-height: 1.52;
+}
+
+.converter-page .code-block {
+  padding-block: 10px;
+}
+
+.converter-page .code-line {
+  grid-template-columns: 34px minmax(0, 1fr);
+  min-height: 14px;
+  font-size: 8.8px;
+  line-height: 1.5;
+}
+
+.converter-page .line-number {
+  padding-right: 8px;
+}
+
+.converter-page .code-line code {
+  padding-left: 9px;
+}
+
+.converter-page .workspace-status {
+  min-height: 35px;
+  padding-inline: 10px;
+  font-size: 8.5px;
+}
+
+.converter-page .workspace-status svg {
+  width: 12px;
+  height: 12px;
+}
+
+.converter-page .converter-aside {
+  gap: 7px;
+}
+
+.converter-page .side-card {
+  border-radius: 7px;
+}
+
+.converter-page .side-title {
+  min-height: 36px;
+  padding-inline: 10px;
+}
+
+.converter-page .side-title strong {
+  gap: 6px;
+  font-size: 9.5px;
+}
+
+.converter-page .side-title svg {
+  width: 13px;
+  height: 13px;
+}
+
+.converter-page .side-card > p {
+  margin: 9px 10px;
+  font-size: 8.7px;
+  line-height: 1.45;
+}
+
+.converter-page .side-card dl > div {
+  min-height: 26px;
+  padding-inline: 10px;
+  font-size: 8.3px;
+}
+
+.converter-page .warning-item {
+  min-height: 59px;
+  padding: 8px 10px;
+  grid-template-columns: 15px 1fr;
+  gap: 7px;
+}
+
+.converter-page .warning-item > svg {
+  width: 13px;
+  height: 13px;
+}
+
+.converter-page .warning-item strong {
+  font-size: 8.7px;
+}
+
+.converter-page .warning-item p {
+  margin-top: 4px;
+  font-size: 7.8px;
+  line-height: 1.4;
+}
+
+.converter-page .chip {
+  padding: 3px 6px;
+  border-radius: 4px;
+  font-size: 7.5px;
+}
+
+.converter-page .converter-support-grid {
+  grid-template-columns: 1fr 1fr 1.02fr;
+  gap: 7px;
+  margin-top: 7px;
+}
+
+.converter-page .support-card {
+  min-height: 132px;
+  padding: 11px 12px;
+  border-radius: 7px;
+}
+
+.converter-page .support-title {
+  gap: 7px;
+  margin-bottom: 9px;
+  font-size: 9.5px;
+}
+
+.converter-page .support-title svg {
+  width: 15px;
+  height: 15px;
+}
+
+.converter-page .secret-row {
+  min-height: 39px;
+  margin-top: 5px;
+  padding: 6px 8px;
+  border-radius: 6px;
+}
+
+.converter-page .secret-row small {
+  font-size: 7.5px;
+}
+
+.converter-page .secret-row code {
+  margin-top: 4px;
+  font-size: 8.1px;
+}
+
+.converter-page .secret-row > svg {
+  width: 13px;
+  height: 13px;
+}
+
+.converter-page .support-foot,
+.converter-page .export-card > p {
+  font-size: 7.8px;
+}
+
+.converter-page .validation-row {
+  min-height: 23px;
+  font-size: 8.2px;
+}
+
+.converter-page .validation-row svg {
+  width: 12px;
+  height: 12px;
+}
+
+.converter-page .export-actions {
+  gap: 7px;
+  margin-top: 11px;
+}
+
+.converter-page .export-actions .button {
+  min-height: 32px;
+  padding-inline: 9px;
+  border-radius: 6px;
+  font-size: 8.5px;
+}
+
+@media (max-width: 1160px) {
+  .converter-page .content-width {
+    width: min(100% - 48px, 1218px);
+  }
+
+  .converter-page .converter-workspace {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .converter-page .converter-aside {
+    grid-column: 1 / -1;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto;
+  }
+}
+
+@media (max-width: 900px) {
+  .converter-page .conversion-strip {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .converter-page .converter-workspace,
+  .converter-page .converter-support-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .converter-page .converter-aside {
+    grid-column: auto;
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 620px) {
+  .converter-page .content-width {
+    width: min(100% - 28px, 1218px);
+  }
+
+  .converter-page h1 {
+    font-size: 34px;
+  }
+
+  .converter-page .conversion-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .converter-page .converter-heading .local-badge {
+    margin-top: 12px;
+  }
+
+  .converter-page .input-card textarea {
+    padding-left: 14px;
+    background: #09111c;
+  }
+}
