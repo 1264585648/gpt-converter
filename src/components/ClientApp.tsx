@@ -4,6 +4,13 @@ import FormatsWorkspace from './FormatsWorkspace'
 
 function isFormatsRoute() {
   if (typeof window === 'undefined') return false
+
+  const legacyRoute = window.location.hash.replace(/^#\/?/, '').split('?')[0]
+  if (legacyRoute === 'formats') {
+    window.history.replaceState(null, '', `/formats${window.location.search}`)
+    return true
+  }
+
   return (window.location.pathname.replace(/\/+$/, '') || '/') === '/formats'
 }
 
