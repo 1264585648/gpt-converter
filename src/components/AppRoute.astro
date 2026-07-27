@@ -1,6 +1,7 @@
 ---
 import ClientApp from './ClientApp'
 import BaseLayout from '../layouts/BaseLayout.astro'
+import RouteSeoContent from './RouteSeoContent.astro'
 import StaticPageFallback from './StaticPageFallback.astro'
 import { pageSeo, type PageKey } from '../lib/seo'
 
@@ -10,6 +11,7 @@ interface Props {
 
 const { page } = Astro.props
 const seo = pageSeo[page]
+const hasPersistentContent = page === 'home' || page === 'formats' || page === 'converter'
 ---
 
 <BaseLayout
@@ -22,4 +24,5 @@ const seo = pageSeo[page]
   <ClientApp client:only="react">
     <StaticPageFallback page={page} slot="fallback" />
   </ClientApp>
+  {hasPersistentContent && <RouteSeoContent page={page} />}
 </BaseLayout>

@@ -1,0 +1,100 @@
+---
+import { credentialFormats } from '../content/formats'
+import type { PageKey } from '../lib/seo'
+
+interface Props {
+  page: PageKey
+}
+
+const { page } = Astro.props
+const showFormats = page === 'home' || page === 'formats' || page === 'converter'
+---
+
+{showFormats && (
+  <section class="content-width route-seo-section" aria-labelledby={`${page}-format-docs`}>
+    <div class="route-section-heading">
+      <span class="knowledge-pill">Credential knowledge</span>
+      <h2 id={`${page}-format-docs`}>{page === 'formats' ? 'Credential format documentation' : 'Supported credential formats'}</h2>
+      <p>Use the format pages for field definitions, lifecycle details, conversion limits, security notes, examples, and direct answers.</p>
+    </div>
+    <div class="route-link-grid">
+      {credentialFormats.map((format) => (
+        <a href={`/formats/${format.slug}`}>
+          <strong>{format.title}</strong>
+          <span>{format.shortDescription}</span>
+        </a>
+      ))}
+    </div>
+  </section>
+)}
+
+{page === 'converter' && (
+  <>
+    <section class="content-width route-seo-section" aria-labelledby="conversion-strategies">
+      <div class="route-section-heading">
+        <span class="knowledge-pill">How it works</span>
+        <h2 id="conversion-strategies">Credential conversion strategies</h2>
+        <p>AuthAtlas distinguishes schema transformations from operations that require a credential issuer. Missing secret material is never fabricated.</p>
+      </div>
+      <div class="route-info-grid">
+        <article><h3>Extract</h3><p>Read compatible target fields from credential material that is already present in the source.</p></article>
+        <article><h3>Schema Map</h3><p>Translate compatible fields between wrappers or gateway schemas without generating a new credential.</p></article>
+        <article><h3>OAuth Exchange</h3><p>Use the provider authorization server when a new access token or other issued credential is required.</p></article>
+        <article><h3>Impossible</h3><p>Stop when the target requires secret material that cannot be derived safely from the source.</p></article>
+      </div>
+      <p class="route-inline-link"><a href="/compare">View the full credential conversion compatibility matrix →</a></p>
+    </section>
+
+    <section class="content-width route-seo-section" aria-labelledby="converter-security">
+      <div class="route-section-heading">
+        <span class="knowledge-pill">Local-first security</span>
+        <h2 id="converter-security">What stays on your device</h2>
+        <p>Supported parsing, masking, normalization, compatible schema mapping, and export run in browser memory. OAuth exchange is labeled separately because it requires a provider network request.</p>
+      </div>
+      <p class="route-inline-link"><a href="/security">Read the AuthAtlas security model →</a></p>
+    </section>
+
+    <section class="content-width route-seo-section" aria-labelledby="converter-faq">
+      <div class="route-section-heading">
+        <span class="knowledge-pill">Common questions</span>
+        <h2 id="converter-faq">AI credential converter FAQ</h2>
+      </div>
+      <div class="route-faq-list">
+        <article><h3>Can a refresh token be converted into an access token locally?</h3><p>No. A provider authorization server must exchange the refresh token and issue a new access token.</p></article>
+        <article><h3>Can AuthAtlas convert Sub2API and New API formats?</h3><p>Compatible upstream credential material can be schema-mapped when both source and target versions support the required fields. Version-specific schemas still need verification.</p></article>
+        <article><h3>Does Canonical Format create new secrets?</h3><p>No. Canonical Format normalizes credential material already present in the source and does not invent missing credentials.</p></article>
+      </div>
+    </section>
+  </>
+)}
+
+<footer class="footer route-seo-footer">
+  <div class="content-width footer-inner">
+    <a class="brand" href="/" aria-label="AuthAtlas home"><span class="brand-glyph"><i></i><b></b></span><span>AuthAtlas</span></a>
+    <p>Your local toolkit for understanding and converting AI credentials.</p>
+    <span>© 2026 AuthAtlas</span>
+    <nav><a href="/security">Privacy</a><a href="https://github.com/1264585648/gpt-converter">GitHub</a></nav>
+  </div>
+</footer>
+
+<style>
+  :global(.app-shell > .footer), :global(.static-fallback > .footer) { display: none; }
+  .route-seo-section {
+    padding-top: 4.5rem;
+    padding-bottom: 1rem;
+  }
+  .route-section-heading { max-width: 780px; margin-bottom: 1.5rem; }
+  .route-section-heading h2 { margin: .9rem 0 .7rem; font-size: clamp(1.8rem, 4vw, 2.65rem); letter-spacing: -.025em; }
+  .route-section-heading p, .route-info-grid p, .route-faq-list p { color: #95a0b7; line-height: 1.7; }
+  .route-link-grid, .route-info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+  .route-link-grid a, .route-info-grid article, .route-faq-list article { border: 1px solid rgba(255,255,255,.08); border-radius: 14px; background: rgba(255,255,255,.025); padding: 1.25rem; }
+  .route-link-grid a { display: flex; flex-direction: column; gap: .55rem; color: inherit; text-decoration: none; }
+  .route-link-grid a:hover { border-color: rgba(167,139,250,.45); background: rgba(167,139,250,.06); }
+  .route-link-grid span { color: #8f9ab1; line-height: 1.5; }
+  .route-info-grid h3, .route-faq-list h3 { margin: 0 0 .55rem; font-size: 1rem; }
+  .route-info-grid p, .route-faq-list p { margin: 0; }
+  .route-faq-list { display: grid; gap: .85rem; }
+  .route-inline-link { margin-top: 1.3rem; }
+  .route-inline-link a { color: #aea1ff; text-decoration: none; }
+  .route-seo-footer { margin-top: 4rem; }
+</style>
