@@ -68,12 +68,21 @@ const showFormats = page === 'home' || page === 'formats' || page === 'converter
   </>
 )}
 
+<footer class="footer route-seo-footer">
+  <div class="content-width footer-inner">
+    <a class="brand" href="/" aria-label="AuthAtlas home"><span class="brand-glyph"><i></i><b></b></span><span>AuthAtlas</span></a>
+    <p>Your local toolkit for understanding and converting AI credentials.</p>
+    <span>© 2026 AuthAtlas</span>
+    <nav><a href="/security">Privacy</a><a href="https://github.com/1264585648/gpt-converter">GitHub</a></nav>
+  </div>
+</footer>
+
 <style>
+  :global(.app-shell > .footer), :global(.static-fallback > .footer) { display: none; }
   .route-seo-section {
     padding-top: 4.5rem;
     padding-bottom: 1rem;
   }
-  .route-seo-section:last-child { padding-bottom: 5rem; }
   .route-section-heading { max-width: 780px; margin-bottom: 1.5rem; }
   .route-section-heading h2 { margin: .9rem 0 .7rem; font-size: clamp(1.8rem, 4vw, 2.65rem); letter-spacing: -.025em; }
   .route-section-heading p, .route-info-grid p, .route-faq-list p { color: #95a0b7; line-height: 1.7; }
@@ -87,4 +96,5 @@ const showFormats = page === 'home' || page === 'formats' || page === 'converter
   .route-faq-list { display: grid; gap: .85rem; }
   .route-inline-link { margin-top: 1.3rem; }
   .route-inline-link a { color: #aea1ff; text-decoration: none; }
+  .route-seo-footer { margin-top: 4rem; }
 </style>
