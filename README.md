@@ -26,13 +26,15 @@ The current frontend is being implemented against four high-fidelity reference s
 
 ## Routes
 
-The static app uses hash routes so it deploys cleanly on Cloudflare Pages without rewrite rules.
+The static app uses real path-based URLs. Cloudflare Pages serves the root SPA for unmatched paths when there is no top-level `404.html`, so these routes can be opened and refreshed directly without hash fragments.
 
-- `#/` — landing page and credential inspector
-- `#/converter` — credential conversion workspace
-- `#/formats` — authentication format knowledge base
-- `#/compare` — compatibility matrix
-- `#/security` — local-first security model
+- `/` — landing page and credential inspector
+- `/converter` — credential conversion workspace
+- `/formats` — authentication format knowledge base
+- `/compare` — compatibility matrix
+- `/security` — local-first security model
+
+Legacy `#/converter`, `#/formats`, `#/compare`, and `#/security` URLs are normalized to their corresponding real paths in the browser.
 
 ## What is included
 
@@ -70,6 +72,7 @@ The generated `dist/` directory can be deployed directly to Cloudflare Pages.
 
 - Build command: `npm run build`
 - Build output directory: `dist`
+- SPA fallback: provided by Cloudflare Pages while no top-level `404.html` is present
 
 ## Design assets
 
@@ -85,7 +88,11 @@ public/mockups/
 
 The implementation specification lives in `docs/UI_DESIGN_SPEC.md`.
 
-## Roadmap
+## SEO + GEO roadmap
+
+The implementation checklist is maintained in [`docs/SEO_GEO_ROADMAP.md`](docs/SEO_GEO_ROADMAP.md).
+
+## Product roadmap
 
 - Versioned schema adapters
 - JWT payload inspector
