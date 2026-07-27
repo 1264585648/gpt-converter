@@ -7,6 +7,7 @@ import '../compare-calibration.css'
 import '../qa-fixes.css'
 import '../a11y-qa.css'
 import { siteIdentity } from '../lib/seo'
+import type { JsonLdNode } from '../lib/structured-data'
 
 interface Props {
   title?: string
@@ -14,6 +15,7 @@ interface Props {
   canonicalPath?: string
   ogImage?: string
   robots?: string
+  structuredData?: JsonLdNode
 }
 
 const {
@@ -22,6 +24,7 @@ const {
   canonicalPath = Astro.url.pathname,
   ogImage = '/mockups/home.jpg',
   robots = 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1',
+  structuredData,
 } = Astro.props
 
 const canonicalUrl = Astro.site ? new URL(canonicalPath, Astro.site).toString() : undefined
@@ -53,6 +56,8 @@ const socialImageUrl = Astro.site ? new URL(ogImage, Astro.site).toString() : og
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={socialImageUrl} />
     <meta name="twitter:image:alt" content={`${title} preview`} />
+
+    {structuredData && <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />}
 
     <title>{title}</title>
     <script is:inline>
