@@ -41,6 +41,8 @@ type Page = 'home' | 'converter' | 'formats' | 'compare' | 'security'
 type Target = 'Canonical' | 'Sub2API' | 'New API'
 type PathKind = 'Self' | 'Extract' | 'Schema Map' | 'OAuth Exchange' | 'Impossible'
 
+type PathSelection = { source: string; target: string; kind: PathKind }
+
 const demoValue = `{
   "provider": "openai",
   "credential_type": "oauth",
@@ -58,12 +60,42 @@ const demoValue = `{
 }`
 
 const formatItems = [
-  { title: 'Access Token', icon: KeyRound, tone: 'green', description: 'Short-lived credential used to access protected resources.', tags: ['OAuth 2.0', 'Bearer'] },
-  { title: 'Refresh Token', icon: RefreshCw, tone: 'violet', description: 'Long-lived credential used to obtain new access tokens.', tags: ['OAuth 2.0', 'Sensitive'] },
-  { title: 'API Key', icon: KeyRound, tone: 'amber', description: 'Simple credential used to identify and authorize API clients.', tags: ['API Key', 'Sensitive'] },
-  { title: 'Sub2API', icon: Network, tone: 'blue', description: 'Gateway-side account wrapper for upstream credentials.', tags: ['Gateway', 'Versioned'] },
-  { title: 'New API', icon: Sparkles, tone: 'pink', description: 'Provider/channel configuration for a unified model gateway.', tags: ['Gateway', 'Channel'] },
-  { title: 'Canonical Format', icon: Box, tone: 'violet', description: 'Normalized, provider-agnostic representation of credentials.', tags: ['Canonical', 'Local'] },
+  {
+    title: 'Access Token', icon: KeyRound, tone: 'green', description: 'Short-lived credential used to access protected resources.', tags: ['OAuth 2.0', 'Bearer'],
+    detail: 'A short-lived credential presented to an API or resource server to authorize requests on behalf of a user or application.', sensitivity: 'Sensitive', lifetime: 'Minutes to hours', usedFor: 'Authenticated API requests', transport: 'Authorization: Bearer', revocable: 'Provider-dependent', rotation: 'Refresh or re-authenticate', store: 'Memory or secure storage',
+    fields: ['access_token', 'token_type', 'expires_in', 'scope'], conversion: 'Canonical format and compatible gateway wrappers when the target accepts the same token material.',
+    security: ['Keep access tokens out of logs and URLs.', 'Prefer short lifetimes and minimum scopes.', 'Revoke or refresh after suspected exposure.'],
+  },
+  {
+    title: 'Refresh Token', icon: RefreshCw, tone: 'violet', description: 'Long-lived credential used to obtain new access tokens.', tags: ['OAuth 2.0', 'Sensitive'],
+    detail: 'A long-lived OAuth credential issued by an authorization server and used to obtain new access tokens without requiring the user to sign in again.', sensitivity: 'Highly sensitive', lifetime: 'Days to months', usedFor: 'Obtaining new access tokens', transport: 'OAuth token endpoint', revocable: 'Yes', rotation: 'Recommended', store: 'Secure server-side storage',
+    fields: ['refresh_token', 'token_type', 'expires_in?', 'scope?', 'issued_at?'], conversion: 'Canonical format locally. Refresh Token → Access Token requires a provider OAuth exchange, not a local conversion.',
+    security: ['Store encrypted and avoid exposing it to browser code.', 'Use refresh-token rotation where the provider supports it.', 'Revoke immediately after suspected exposure.'],
+  },
+  {
+    title: 'API Key', icon: KeyRound, tone: 'amber', description: 'Simple credential used to identify and authorize API clients.', tags: ['API Key', 'Sensitive'],
+    detail: 'A provider-issued secret used by applications to authenticate API requests. Unlike OAuth tokens, it usually represents an application or account rather than a delegated user session.', sensitivity: 'Highly sensitive', lifetime: 'Until rotated or revoked', usedFor: 'Direct API authentication', transport: 'Provider-specific header', revocable: 'Yes', rotation: 'Recommended', store: 'Secret manager / server-side',
+    fields: ['api_key', 'provider?', 'base_url?'], conversion: 'Canonical format and compatible gateway wrappers. It cannot be converted into an OAuth refresh token.',
+    security: ['Never embed production keys in public frontend bundles.', 'Use scoped keys when the provider offers them.', 'Rotate exposed keys instead of trying to hide leaked values.'],
+  },
+  {
+    title: 'Sub2API', icon: Network, tone: 'blue', description: 'Gateway-side account wrapper for upstream credentials.', tags: ['Gateway', 'Versioned'],
+    detail: 'A gateway-oriented account/configuration wrapper that can contain upstream OAuth or API-key material. Exact fields depend on the deployed Sub2API version and provider.', sensitivity: 'Depends on contents', lifetime: 'Mirrors upstream credential', usedFor: 'Gateway account configuration', transport: 'Admin/account configuration', revocable: 'Via upstream credential', rotation: 'Version/provider-dependent', store: 'Gateway secure storage',
+    fields: ['provider', 'access_token?', 'refresh_token?', 'api_key?', 'base_url?'], conversion: 'Extract to Canonical locally or schema-map into another gateway format after verifying the exact deployment version.',
+    security: ['Treat wrappers as secrets when they contain upstream credentials.', 'Verify version-specific schema before import.', 'Do not send credential wrappers to third-party conversion services.'],
+  },
+  {
+    title: 'New API', icon: Sparkles, tone: 'pink', description: 'Provider/channel configuration for a unified model gateway.', tags: ['Gateway', 'Channel'],
+    detail: 'A unified model-gateway channel configuration. Authentication fields vary by provider, channel type, and project version, so adapters should be treated as versioned schema mappings.', sensitivity: 'Depends on contents', lifetime: 'Mirrors upstream credential', usedFor: 'Provider/channel configuration', transport: 'Gateway admin configuration', revocable: 'Via upstream credential', rotation: 'Provider-dependent', store: 'Gateway secure storage',
+    fields: ['type', 'provider', 'key?', 'access_token?', 'refresh_token?', 'base_url?'], conversion: 'Extract to Canonical or schema-map to another compatible gateway format after checking the target version.',
+    security: ['Channel exports may contain live provider secrets.', 'Validate schema against the deployed project version.', 'Mask secrets in screenshots, logs, and issue reports.'],
+  },
+  {
+    title: 'Canonical Format', icon: Box, tone: 'violet', description: 'Normalized, provider-agnostic representation of credentials.', tags: ['Canonical', 'Local'],
+    detail: 'AuthAtlas’s provider-agnostic intermediate representation. It separates the credential material from source-format metadata so adapters can map through one normalized model.', sensitivity: 'Depends on contents', lifetime: 'Mirrors source credential', usedFor: 'Inspection and schema mapping', transport: 'Local JSON representation', revocable: 'Depends on source', rotation: 'Depends on source', store: 'Local memory or secure export',
+    fields: ['provider', 'credential_type', 'auth', 'source'], conversion: 'Designed as the local intermediate format for mapping to supported target schemas without fabricating missing credentials.',
+    security: ['Canonical does not make secrets less sensitive.', 'Keep exports masked unless the raw secret is explicitly needed.', 'Do not infer or generate credentials that are absent from the source.'],
+  },
 ]
 
 const matrixHeaders = ['Access Token', 'Refresh Token', 'Sub2API', 'New API', 'Canonical', 'API Key']
@@ -75,6 +107,8 @@ const matrixRows: { source: string; cells: PathKind[] }[] = [
   { source: 'Canonical', cells: ['Schema Map', 'Impossible', 'Schema Map', 'Schema Map', 'Self', 'Schema Map'] },
   { source: 'API Key', cells: ['Impossible', 'Impossible', 'Schema Map', 'Schema Map', 'Extract', 'Self'] },
 ]
+
+const defaultPath: PathSelection = { source: 'Refresh Token', target: 'Access Token', kind: 'OAuth Exchange' }
 
 function pageFromHash(): Page {
   const route = window.location.hash.replace(/^#\/?/, '').split('?')[0]
@@ -145,15 +179,15 @@ function canonicalOutput(detection: Detection) {
 function gatewayOutput(detection: Detection, target: Exclude<Target, 'Canonical'>) {
   return JSON.stringify({
     format: target === 'Sub2API' ? 'sub2api' : 'new-api',
-    provider: detection.provider === 'Unknown' ? 'openai' : detection.provider,
+    provider: detection.provider === 'Unknown' ? null : detection.provider,
     auth: {
-      type: detection.refreshToken ? 'oauth2' : detection.apiKey ? 'api_key' : 'unknown',
+      type: detection.refreshToken ? 'oauth2' : detection.apiKey ? 'api_key' : detection.accessToken ? 'bearer' : 'unknown',
       token_type: detection.accessToken ? 'Bearer' : null,
       access_token: detection.accessToken ?? null,
       refresh_token: detection.refreshToken ?? null,
       api_key: detection.apiKey ?? null,
     },
-    metadata: { converted_by: 'AuthAtlas', local_only: true },
+    metadata: { converted_by: 'AuthAtlas', local_only: true, adapter_note: 'Verify fields against the exact target project version.' },
   }, null, 2)
 }
 
@@ -164,6 +198,35 @@ function maskedJson(value: string) {
 async function copyText(value: string) {
   if (!navigator.clipboard) throw new Error('Clipboard API unavailable')
   await navigator.clipboard.writeText(value)
+}
+
+function pathDetails(selection: PathSelection) {
+  const { source, target, kind } = selection
+  if (kind === 'OAuth Exchange') return {
+    summary: "This path requires the provider's OAuth server. It is not a pure local transformation.",
+    why: `${target} must be issued by the authorization server; ${source} can only be exchanged through the provider token endpoint.`,
+    requirements: ['Valid refresh credential', 'Provider token endpoint', 'Required client authentication', 'Explicit network request'],
+  }
+  if (kind === 'Extract') return {
+    summary: 'The target fields can be read from the source locally without contacting a provider.',
+    why: `${source} already contains credential material that can be represented as ${target}; AuthAtlas only extracts the relevant fields.`,
+    requirements: ['Recognized source structure', 'Required target fields present', 'No provider network request'],
+  }
+  if (kind === 'Schema Map') return {
+    summary: 'This path is a local schema mapping or wrapper transformation.',
+    why: `${source} and ${target} can carry compatible credential material but use different field names or container structures.`,
+    requirements: ['Recognized source fields', 'Target schema/version known', 'No missing secret fabricated'],
+  }
+  if (kind === 'Self') return {
+    summary: 'Source and target are already the same format.',
+    why: 'No conversion is required; the safest operation is to preserve the source value as-is.',
+    requirements: ['No transformation needed', 'Preserve secret value', 'Keep handling local'],
+  }
+  return {
+    summary: 'No safe or meaningful direct conversion path is known.',
+    why: `${target} requires credential material that cannot be derived from ${source} alone. AuthAtlas will not invent missing secrets.`,
+    requirements: ['Choose a compatible target', 'Use Canonical for inspection', 'Obtain required credentials from the provider'],
+  }
 }
 
 function Brand() {
@@ -190,12 +253,7 @@ function HomePage({ input, setInput, detection }: { input: string; setInput: (va
   const [copyState, setCopyState] = useState<'idle' | 'copied' | 'error'>('idle')
   const meta = useMemo(() => inputMeta(input, detection), [input, detection])
   const copyInput = async () => {
-    try {
-      await copyText(input)
-      setCopyState('copied')
-    } catch {
-      setCopyState('error')
-    }
+    try { await copyText(input); setCopyState('copied') } catch { setCopyState('error') }
     window.setTimeout(() => setCopyState('idle'), 1200)
   }
   return <main className="home-page page-shell"><section className="hero-section content-width"><LocalBadge /><h1>Understand your <span>AI credentials.</span></h1><p>Inspect, compare and convert OAuth tokens, API keys, Sub2API and New API formats locally in your browser.</p><div className="hero-actions"><a className="button primary" href="#/converter"><Zap size={17} /> Open Converter</a><a className="button secondary" href="#/formats"><Grid2X2 size={17} /> Explore Formats</a></div></section><section className="hero-workbench content-width"><div className="input-window"><div className="window-head"><span>&lt;/&gt; Input</span><div className="head-tools"><span className="select-pill">Auto-detect <ChevronDown size={13} /></span><button type="button" onClick={copyInput} aria-label="Copy input" title={copyState === 'error' ? 'Copy failed' : copyState === 'copied' ? 'Copied' : 'Copy input'}><Copy size={14} /></button><button type="button" onClick={() => setInput('')} aria-label="Clear input" title="Clear input"><Trash2 size={14} /></button></div></div><textarea value={input} onChange={(event) => setInput(event.target.value)} spellCheck={false} aria-label="Credential input" /><div className="window-foot"><span>{meta.status === 'Unrecognized input' ? <CircleAlert size={15} /> : <CheckCircle2 size={15} />} {meta.status}</span><span>{meta.size} &nbsp; · &nbsp; {detection.label}</span></div></div><AnalysisPanel detection={detection} onClear={() => setInput('')} /></section><section className="feature-grid content-width"><Feature icon={<ShieldCheck />} title="Local-first processing" copy="Everything runs in your browser. Your data never leaves your device." badge="100% Private" tone="violet" /><Feature icon={<Grid2X2 />} title="Compatibility Matrix" copy="Compare format support across providers and authentication types." badge="Clear conversion paths" tone="blue" /><Feature icon={<Box />} title="Canonical Format" copy="Convert supported credentials into one clean, portable representation." badge="Consistent & portable" tone="violet" /><Feature icon={<LockKeyhole />} title="Secure Masked Preview" copy="Sensitive values are masked automatically in previews and exports." badge="Safety by default" tone="green" /></section></main>
@@ -214,12 +272,7 @@ function ConverterPage({ input, setInput, detection }: { input: string; setInput
   const output = useMemo(() => target === 'Canonical' ? canonicalOutput(detection) : gatewayOutput(detection, target), [detection, target])
   const visibleOutput = showSecret ? output : maskedJson(output)
   const copyOutput = async () => {
-    try {
-      await copyText(output)
-      setCopyState('copied')
-    } catch {
-      setCopyState('error')
-    }
+    try { await copyText(output); setCopyState('copied') } catch { setCopyState('error') }
     window.setTimeout(() => setCopyState('idle'), 1200)
   }
   const downloadOutput = () => { const blob = new Blob([output], { type: 'application/json' }); const url = URL.createObjectURL(blob); const anchor = document.createElement('a'); anchor.href = url; anchor.download = `authatlas-${target.toLowerCase().replaceAll(' ', '-')}.json`; anchor.click(); URL.revokeObjectURL(url) }
@@ -236,8 +289,9 @@ function FormatsPage() {
   const filtered = formatItems.filter((item) => `${item.title} ${item.description} ${item.tags.join(' ')}`.toLowerCase().includes(query.toLowerCase()))
   const item = formatItems.find((entry) => entry.title === selected) ?? formatItems[1]
   const Icon = item.icon
+  const isRefreshToken = item.title === 'Refresh Token'
 
-  return <main className="page-shell inner-page formats-page"><section className="content-width formats-heading"><div><span className="knowledge-pill"><Box size={13} /> Knowledge</span><h1>Explore <span>Authentication Formats</span></h1><p>Learn the purpose, sensitivity, and compatibility of common authentication formats.</p></div><label className="search-box"><Search /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search formats, fields, or concepts..." /><kbd>⌘ K</kbd></label></section><section className="content-width formats-layout"><aside className="category-rail"><strong>Browse by category</strong><Category active title="Authentication" copy="Tokens, keys & API credentials" count="6" icon={<KeyRound />} /><Category title="Gateway Formats" copy="Proxy & gateway wrappers" count="3" icon={<Network />} /><Category title="CLI Formats" copy="CLI config & credential files" count="2" icon={<Box />} /><Category title="Security Concepts" copy="Core ideas & best practices" count="6" icon={<ShieldCheck />} /><strong className="filter-title">Filter by tags</strong><div className="tag-cloud"><span>OAuth 2.0&nbsp; 4</span><span>Bearer&nbsp; 4</span><span>Gateway wrapper&nbsp; 3</span><span>API Key&nbsp; 2</span><span>Sub2API&nbsp; 1</span><span>New API&nbsp; 1</span><span>Canonical&nbsp; 1</span></div><div className="rail-callout"><Zap /><strong>Not sure what a format is?</strong><p>Formats define how credentials are structured, transported, and verified.</p><a href="#/security">Learn the basics <ArrowRight /></a></div></aside><div className="format-list-pane"><div className="list-toolbar"><span>Show <Grid2X2 /> ≡</span><small>Showing {filtered.length} of 6 formats</small></div>{filtered.map((entry) => { const RowIcon = entry.icon; return <button className={`format-list-item ${selected === entry.title ? 'selected' : ''}`} key={entry.title} onClick={() => setSelected(entry.title)}><span className={`format-list-icon tone-${entry.tone}`}><RowIcon /></span><span className="format-list-copy"><strong>{entry.title}</strong><small>{entry.description}</small><span>{entry.tags.map((tag) => <i key={tag}>{tag}</i>)}</span></span><ArrowRight /></button> })}</div><article className="format-detail"><div className="detail-header"><div><span className={`detail-icon tone-${item.tone}`}><Icon /></span><span><h2>{item.title} <i>Sensitive</i></h2><div className="detail-tags">{item.tags.map((tag) => <b key={tag}>{tag}</b>)}</div></span></div><a className="button secondary purple-outline" href="#/converter"><Zap /> Open in Converter</a></div><p className="detail-intro">A long-lived credential issued by an authorization server that can be exchanged for a new access token when the current access token expires.</p><div className="detail-primary-grid"><div className="lifecycle-card"><strong>Lifecycle: <span>How it works</span></strong><div className="lifecycle-flow"><FlowStep icon={<User />} title="Login" copy="User authenticates with the provider" /><ArrowRight /><FlowStep icon={<LockKeyhole />} title="Access Token + Refresh Token" copy="Access token for API calls, refresh token stored securely" /><ArrowRight /><FlowStep icon={<RefreshCw />} title="New Access Token" copy="Use refresh token when a new token is needed" /></div><div className="tip-line"><ShieldCheck /> Tip: Rotate refresh tokens when possible and store securely.</div></div><div className="glance-card"><strong>At a glance</strong><Glance label="Sensitivity" value="Sensitive" danger /><Glance label="Typical lifetime" value="Days to months" /><Glance label="Used for" value="Obtaining new access tokens" /><Glance label="Transport" value="Server-to-server (token endpoint)" /><Glance label="Revocable" value="✓ Yes" /><Glance label="Rotation" value="✓ Recommended" /><Glance label="Store" value="Secure, server-side storage" /></div></div><div className="detail-bottom-grid"><InfoTile title="What it is"><p>A refresh token lets a client obtain a new access token without requiring the user to re-authenticate. Treat it as highly sensitive.</p><a href="#/security">Learn more <ArrowRight /></a></InfoTile><InfoTile title="Typical fields"><pre>token_type      "refresh_token"{`\n`}refresh_token   "..."{`\n`}expires_in      2592000{`\n`}scope           "openid profile offline_access"{`\n`}issued_at       1716489723</pre></InfoTile><InfoTile title="Can convert to"><p>Normalize to Canonical Format for inspection, comparison, and safer schema migration.</p><span className="chip purple"><Box /> Canonical Format</span></InfoTile><InfoTile title="Security notes"><ul><li>Store encrypted and never expose to browsers unnecessarily.</li><li>Use rotation and revoke on suspicious activity.</li><li>Limit scope and lifetime where possible.</li></ul></InfoTile></div></article></section></main>
+  return <main className="page-shell inner-page formats-page"><section className="content-width formats-heading"><div><span className="knowledge-pill"><Box size={13} /> Knowledge</span><h1>Explore <span>Authentication Formats</span></h1><p>Learn the purpose, sensitivity, and compatibility of common authentication formats.</p></div><label className="search-box"><Search /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search formats, fields, or concepts..." /><kbd>⌘ K</kbd></label></section><section className="content-width formats-layout"><aside className="category-rail"><strong>Browse by category</strong><Category active title="Authentication" copy="Tokens, keys & API credentials" count="6" icon={<KeyRound />} /><Category title="Gateway Formats" copy="Proxy & gateway wrappers" count="3" icon={<Network />} /><Category title="CLI Formats" copy="CLI config & credential files" count="2" icon={<Box />} /><Category title="Security Concepts" copy="Core ideas & best practices" count="6" icon={<ShieldCheck />} /><strong className="filter-title">Filter by tags</strong><div className="tag-cloud"><span>OAuth 2.0&nbsp; 4</span><span>Bearer&nbsp; 4</span><span>Gateway wrapper&nbsp; 3</span><span>API Key&nbsp; 2</span><span>Sub2API&nbsp; 1</span><span>New API&nbsp; 1</span><span>Canonical&nbsp; 1</span></div><div className="rail-callout"><Zap /><strong>Not sure what a format is?</strong><p>Formats define how credentials are structured, transported, and verified.</p><a href="#/security">Learn the basics <ArrowRight /></a></div></aside><div className="format-list-pane"><div className="list-toolbar"><span>Show <Grid2X2 /> ≡</span><small>Showing {filtered.length} of 6 formats</small></div>{filtered.map((entry) => { const RowIcon = entry.icon; return <button className={`format-list-item ${selected === entry.title ? 'selected' : ''}`} key={entry.title} onClick={() => setSelected(entry.title)}><span className={`format-list-icon tone-${entry.tone}`}><RowIcon /></span><span className="format-list-copy"><strong>{entry.title}</strong><small>{entry.description}</small><span>{entry.tags.map((tag) => <i key={tag}>{tag}</i>)}</span></span><ArrowRight /></button> })}</div><article className="format-detail"><div className="detail-header"><div><span className={`detail-icon tone-${item.tone}`}><Icon /></span><span><h2>{item.title} <i>{item.sensitivity}</i></h2><div className="detail-tags">{item.tags.map((tag) => <b key={tag}>{tag}</b>)}</div></span></div><a className="button secondary purple-outline" href="#/converter"><Zap /> Open in Converter</a></div><p className="detail-intro">{item.detail}</p><div className="detail-primary-grid"><div className="lifecycle-card"><strong>{isRefreshToken ? 'Lifecycle:' : 'Workflow:'} <span>How it works</span></strong><div className="lifecycle-flow">{isRefreshToken ? <><FlowStep icon={<User />} title="Login" copy="User authenticates with the provider" /><ArrowRight /><FlowStep icon={<LockKeyhole />} title="Access Token + Refresh Token" copy="Access token for API calls, refresh token stored securely" /><ArrowRight /><FlowStep icon={<RefreshCw />} title="New Access Token" copy="Use refresh token through the provider token endpoint" /></> : <><FlowStep icon={<Icon />} title={item.title} copy="Inspect the source format and fields" /><ArrowRight /><FlowStep icon={<Box />} title="Canonical" copy="Normalize credential material locally" /><ArrowRight /><FlowStep icon={<Network />} title="Target schema" copy="Map only when the target supports the required fields" /></>}</div><div className="tip-line"><ShieldCheck /> {isRefreshToken ? 'Tip: Rotation is recommended where the provider supports it.' : 'Tip: Never fabricate secret fields that are absent from the source.'}</div></div><div className="glance-card"><strong>At a glance</strong><Glance label="Sensitivity" value={item.sensitivity} danger={item.sensitivity !== 'Low'} /><Glance label="Typical lifetime" value={item.lifetime} /><Glance label="Used for" value={item.usedFor} /><Glance label="Transport" value={item.transport} /><Glance label="Revocable" value={item.revocable} /><Glance label="Rotation" value={item.rotation} /><Glance label="Store" value={item.store} /></div></div><div className="detail-bottom-grid"><InfoTile title="What it is"><p>{item.detail}</p><a href="#/security">Learn more <ArrowRight /></a></InfoTile><InfoTile title="Typical fields"><pre>{item.fields.join('\n')}</pre></InfoTile><InfoTile title="Can convert to"><p>{item.conversion}</p><span className="chip purple"><Box /> Canonical Format</span></InfoTile><InfoTile title="Security notes"><ul>{item.security.map((note) => <li key={note}>{note}</li>)}</ul></InfoTile></div></article></section></main>
 }
 
 function Category({ active, title, copy, count, icon }: { active?: boolean; title: string; copy: string; count: string; icon: ReactNode }) { return <button className={`category-item ${active ? 'active' : ''}`}><span>{icon}</span><span><strong>{title}</strong><small>{copy}</small></span><i>{count}</i></button> }
@@ -246,8 +300,9 @@ function Glance({ label, value, danger }: { label: string; value: string; danger
 function InfoTile({ title, children }: { title: string; children: ReactNode }) { return <section className="info-tile"><strong>{title}</strong>{children}</section> }
 
 function ComparePage() {
-  const [selected, setSelected] = useState({ source: 'Refresh Token', target: 'Access Token', kind: 'OAuth Exchange' as PathKind })
-  return <main className="page-shell inner-page compare-page"><section className="content-width compare-heading"><h1>Compatibility <span>Matrix</span></h1><p>See which credential formats can be converted into which targets. Understand when conversion is local, requires schema mapping, needs OAuth exchange, or is impossible.</p></section><section className="content-width compare-main-grid"><article className="matrix-panel"><div className="matrix-title"><strong>Conversion Compatibility Matrix</strong><span>View: <b>All Paths</b> <ChevronDown /></span></div><div className="matrix-wrap"><table><thead><tr><th>From \ To</th>{matrixHeaders.map((header) => <th key={header}>{header}</th>)}</tr></thead><tbody>{matrixRows.map((row) => <tr key={row.source}><th>{row.source}</th>{row.cells.map((cell, index) => <td key={`${row.source}-${matrixHeaders[index]}`}><button className={`path-chip ${cell.toLowerCase().replaceAll(' ', '-')}`} onClick={() => setSelected({ source: row.source, target: matrixHeaders[index], kind: cell })}>{cell}</button></td>)}</tr>)}</tbody></table></div><p className="matrix-hint">Hover a cell to see details. Click a cell to inspect a conversion path.</p></article><aside className="selected-path"><div className="selected-head"><strong>Selected Path</strong><span>Clear &nbsp; ×</span></div><div className="path-display"><div><RefreshCw /><strong>{selected.source}</strong><small>Source</small></div><ArrowRight /><div><KeyRound /><strong>{selected.target}</strong><small>Target</small></div></div><span className={`chip path-kind ${selected.kind.toLowerCase().replaceAll(' ', '-')}`}>{selected.kind}</span><p>{selected.kind === 'OAuth Exchange' ? "This conversion requires the provider's OAuth server. It is not a pure local transformation." : selected.kind === 'Impossible' ? 'No known safe or meaningful direct conversion path exists.' : 'This path can be represented locally through extraction or schema mapping.'}</p><h3>Why</h3><p>An access token must be issued by the authorization server. A refresh token can only be exchanged at the provider token endpoint.</p><h3>Requirements</h3><ul><li><CheckCircle2 /> Valid source credential</li><li><CheckCircle2 /> Compatible target schema</li><li><CheckCircle2 /> Provider endpoint when exchange is required</li><li><CheckCircle2 /> Explicit network action for remote exchange</li></ul><a className="button primary" href="#/converter"><Zap /> Open in Converter</a></aside></section><section className="content-width matrix-legend-card"><strong>Legend</strong><Legend kind="Extract" copy="Pure local extraction. No transformation needed." /><Legend kind="Schema Map" copy="Requires schema mapping or field translation." /><Legend kind="OAuth Exchange" copy="Requires provider OAuth server interaction." /><Legend kind="Impossible" copy="No known safe conversion path exists." /><Legend kind="Self" copy="Source and target are the same." /></section><section className="content-width compare-support-grid"><InfoPanel icon={<Box />} title="Recommended Canonical Workflow"><div className="canonical-flow"><span>Any Format</span><ArrowRight /><span>Canonical</span><ArrowRight /><span>Target Format</span></div><p>Normalize to Canonical first for consistent, reversible conversions across providers and formats.</p><a href="#/formats">Learn about Canonical Format</a></InfoPanel><InfoPanel icon={<ShieldCheck />} title="Security Reminder"><p>Local conversions stay in your browser. OAuth exchange is intentionally labeled as remote.</p><ul><li>✓ No secret database</li><li>✓ No credential analytics</li><li>✓ Masked by default</li><li>✓ Static deployable</li></ul></InfoPanel><InfoPanel icon={<ArrowRight />} title="Popular Paths"><PathList label="Refresh Token → Access Token" kind="OAuth Exchange" /><PathList label="Access Token → Canonical" kind="Extract" /><PathList label="Sub2API → Canonical" kind="Extract" /><PathList label="New API → Canonical" kind="Extract" /></InfoPanel></section></main>
+  const [selected, setSelected] = useState<PathSelection>(defaultPath)
+  const details = pathDetails(selected)
+  return <main className="page-shell inner-page compare-page"><section className="content-width compare-heading"><h1>Compatibility <span>Matrix</span></h1><p>See which credential formats can be converted into which targets. Understand when conversion is local, requires schema mapping, needs OAuth exchange, or is impossible.</p></section><section className="content-width compare-main-grid"><article className="matrix-panel"><div className="matrix-title"><strong>Conversion Compatibility Matrix</strong><span>View: <b>All Paths</b> <ChevronDown /></span></div><div className="matrix-wrap"><table><thead><tr><th>From \ To</th>{matrixHeaders.map((header) => <th key={header}>{header}</th>)}</tr></thead><tbody>{matrixRows.map((row) => <tr key={row.source}><th>{row.source}</th>{row.cells.map((cell, index) => <td key={`${row.source}-${matrixHeaders[index]}`}><button className={`path-chip ${cell.toLowerCase().replaceAll(' ', '-')}`} onClick={() => setSelected({ source: row.source, target: matrixHeaders[index], kind: cell })}>{cell}</button></td>)}</tr>)}</tbody></table></div><p className="matrix-hint">Click a cell to inspect that conversion path.</p></article><aside className="selected-path"><div className="selected-head"><strong>Selected Path</strong><button type="button" onClick={() => setSelected(defaultPath)}>Reset &nbsp; ×</button></div><div className="path-display"><div><RefreshCw /><strong>{selected.source}</strong><small>Source</small></div><ArrowRight /><div><KeyRound /><strong>{selected.target}</strong><small>Target</small></div></div><span className={`chip path-kind ${selected.kind.toLowerCase().replaceAll(' ', '-')}`}>{selected.kind}</span><p>{details.summary}</p><h3>Why</h3><p>{details.why}</p><h3>Requirements</h3><ul>{details.requirements.map((requirement) => <li key={requirement}>{selected.kind === 'Impossible' ? <CircleAlert /> : <CheckCircle2 />} {requirement}</li>)}</ul><a className="button primary" href="#/converter"><Zap /> Open in Converter</a></aside></section><section className="content-width matrix-legend-card"><strong>Legend</strong><Legend kind="Extract" copy="Pure local extraction. No transformation needed." /><Legend kind="Schema Map" copy="Requires schema mapping or field translation." /><Legend kind="OAuth Exchange" copy="Requires provider OAuth server interaction." /><Legend kind="Impossible" copy="No known safe conversion path exists." /><Legend kind="Self" copy="Source and target are the same." /></section><section className="content-width compare-support-grid"><InfoPanel icon={<Box />} title="Recommended Canonical Workflow"><div className="canonical-flow"><span>Any Format</span><ArrowRight /><span>Canonical</span><ArrowRight /><span>Target Format</span></div><p>Normalize to Canonical first for consistent, reversible conversions across providers and formats.</p><a href="#/formats">Learn about Canonical Format</a></InfoPanel><InfoPanel icon={<ShieldCheck />} title="Security Reminder"><p>Local conversions stay in your browser. OAuth exchange is intentionally labeled as remote.</p><ul><li>✓ No secret database</li><li>✓ No credential analytics</li><li>✓ Masked by default</li><li>✓ Static deployable</li></ul></InfoPanel><InfoPanel icon={<ArrowRight />} title="Popular Paths"><PathList label="Refresh Token → Access Token" kind="OAuth Exchange" /><PathList label="Access Token → Canonical" kind="Extract" /><PathList label="Sub2API → Canonical" kind="Extract" /><PathList label="New API → Canonical" kind="Extract" /></InfoPanel></section></main>
 }
 
 function Legend({ kind, copy }: { kind: PathKind; copy: string }) { return <div className="legend-item"><span className={`path-chip ${kind.toLowerCase().replaceAll(' ', '-')}`}>{kind}</span><small>{copy}</small></div> }
