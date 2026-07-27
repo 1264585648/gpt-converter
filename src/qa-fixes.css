@@ -1,7 +1,8 @@
 /* Interaction QA polish. Keep this layer small and behavior-oriented. */
 
 .head-tools button,
-.secret-row button {
+.secret-row button,
+.selected-head button {
   appearance: none;
   border: 0;
   background: transparent;
@@ -14,13 +15,15 @@
 }
 
 .head-tools button:hover,
-.secret-row button:hover {
+.secret-row button:hover,
+.selected-head button:hover {
   color: #eef2f8;
   background: #162031;
 }
 
 .head-tools button:focus-visible,
 .secret-row button:focus-visible,
+.selected-head button:focus-visible,
 .workspace-head button:focus-visible,
 .convert-button:focus-visible {
   outline: 2px solid rgba(139, 92, 246, 0.82);
@@ -30,4 +33,10 @@
 .secret-row button svg {
   width: 15px;
   height: 15px;
+}
+
+.selected-head button {
+  display: inline-flex;
+  font-size: 8.5px;
+  line-height: 1;
 }
