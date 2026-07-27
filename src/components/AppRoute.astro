@@ -2,17 +2,23 @@
 import ClientApp from './ClientApp'
 import BaseLayout from '../layouts/BaseLayout.astro'
 import StaticPageFallback from './StaticPageFallback.astro'
+import { pageSeo, type PageKey } from '../lib/seo'
 
 interface Props {
-  page: 'home' | 'converter' | 'formats' | 'compare' | 'security'
-  title: string
-  description: string
+  page: PageKey
 }
 
-const { page, title, description } = Astro.props
+const { page } = Astro.props
+const seo = pageSeo[page]
 ---
 
-<BaseLayout title={title} description={description}>
+<BaseLayout
+  title={seo.title}
+  description={seo.description}
+  canonicalPath={seo.path}
+  ogImage={seo.ogImage}
+  robots={seo.robots}
+>
   <ClientApp client:only="react">
     <StaticPageFallback page={page} slot="fallback" />
   </ClientApp>
