@@ -4,6 +4,7 @@ export const siteIdentity = {
   name: 'AuthAtlas',
   description: 'AuthAtlas is a local-first AI credential inspector and format converter for OAuth tokens, API keys, Sub2API, New API, and related gateway credential formats.',
   locale: 'en_US',
+  repositoryUrl: 'https://github.com/1264585648/gpt-converter',
 } as const
 
 type PageSeo = {
