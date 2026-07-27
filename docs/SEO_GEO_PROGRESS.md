@@ -25,7 +25,7 @@ Astro static site
 └── React client island
     ├── credential inspector
     ├── converter
-    ├── formats workspace
+    ├── formats workspace → src/content/formats.ts
     └── compatibility matrix
 ```
 
@@ -41,18 +41,18 @@ The current site generates 29 indexable content/tool URLs before future guide ex
 | 3 — Language and Site Identity | Complete | Primary language is English and the canonical AuthAtlas product description is centralized. |
 | 4 — SEO Metadata | Complete | Unique metadata, robots directives, canonical support, Open Graph, and Twitter Cards are generated from shared configuration. |
 | 5 — robots / Sitemap / Canonical | Code complete; deployment validation pending | `/robots.txt` and `/sitemap.xml` are generated. Set `PUBLIC_SITE_URL` in production and verify crawler access through Cloudflare/WAF. |
-| 6 — Format Content Layer | Partial | Pure format content and stable slugs exist in `src/content/formats.ts`. Static pages use it; the legacy React Formats workspace still has presentation data to migrate. |
+| 6 — Format Content Layer | Complete for active UI | Static format pages and the interactive `/formats` workspace consume `src/content/formats.ts` for semantic format data. The obsolete legacy constants inside `App.tsx` remain only as dead-code cleanup. |
 | 7 — Individual Format Pages | Complete | Six static format documentation pages exist with definitions, facts, fields, examples, conversion notes, security, FAQ, and related links. |
 | 8 — Converter Landing Content | Complete | Persistent supported-format links, conversion-strategy explanations, local-processing guidance, and converter FAQ are present outside the React island. |
 | 9 — Compare / Conversion Pages | Complete | Eight conversion pages and three comparison pages are static, internally linked, and included in sitemap generation. |
 | 10 — Sub2API Topic Cluster | Complete | Format overview, fields, authentication structure, security, Canonical conversion, New API conversion, and comparison pages form the first focused cluster. |
 | 11 — New API Topic Cluster | Complete | Format overview, channel fields, credential structure, security, Canonical conversion, Sub2API conversion, and comparison pages form the second focused cluster. |
-| 12 — Internal Linking | In progress | Format, Compare, Converter, and Guide pages link across major intent transitions; further contextual linking can be added as content expands. |
+| 12 — Internal Linking | Complete for current graph | Format pages now link contextually into relevant Guides, Compare pages, conversion pages, Converter, Security, and related formats. Continue extending the graph only when new content is added. |
 | 13 — Breadcrumbs | Complete for deep content | Format, Compare, and Guide detail pages expose visible breadcrumb navigation; breadcrumb hierarchy is also machine-readable. |
 | 14 — Structured Data | Complete | Home uses WebSite + SoftwareApplication, Converter uses SoftwareApplication, Security and deep documentation pages use TechArticle where appropriate, and hierarchical pages use BreadcrumbList. |
 | 15 — Broader Guides | Deliberately deferred | Expand broad OAuth/authentication content after Sub2API/New API pages have been indexed and query data is available. |
 | 16 — GitHub Entity / Discovery | In progress | Canonical positioning, recommended repository description/topics, README messaging, and deployment checklist are documented. Repository-level description/topics/homepage still need to be applied in GitHub settings when supported. |
-| 17 — 404 / Crawl Hardening | Complete | Astro now emits a top-level custom `404.html` with `noindex,follow`, no canonical URL, useful recovery links, and no structured-data inference. This also disables Cloudflare Pages' SPA catch-all behavior for unknown routes. |
+| 17 — 404 / Crawl Hardening | Complete | Astro emits a top-level custom `404.html` with `noindex,follow`, no canonical URL, useful recovery links, and no structured-data inference. This disables Cloudflare Pages' SPA catch-all behavior for unknown routes. |
 | 18+ | Not started / deployment dependent | Automated OG assets, production performance review, external authority, Search Console iteration, and other growth work remain. |
 
 ## Structured data coverage
@@ -147,7 +147,7 @@ These cannot be completed correctly until the production domain is known:
 
 Continue in this order:
 
-1. Remove the remaining duplicated format content in the React workspace so static docs and interactive UI share one source of truth.
+1. Remove the obsolete dead `formatItems` / legacy `FormatsPage` code from `App.tsx` after the replacement workspace has been exercised in deployment previews.
 2. Apply GitHub description/topics/homepage metadata once repository-metadata write support and the production URL are available.
 3. Run a production performance and crawlability review after Cloudflare Pages deployment.
 4. Wait for initial indexing/query data before expanding broad authentication guides.
