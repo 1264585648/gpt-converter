@@ -12,7 +12,7 @@ import { defaultStructuredDataForPage, type JsonLdNode } from '../lib/structured
 interface Props {
   title?: string
   description?: string
-  canonicalPath?: string
+  canonicalPath?: string | null
   ogImage?: string
   robots?: string
   structuredData?: JsonLdNode
@@ -27,9 +27,9 @@ const {
   structuredData,
 } = Astro.props
 
-const canonicalUrl = Astro.site ? new URL(canonicalPath, Astro.site).toString() : undefined
+const canonicalUrl = canonicalPath && Astro.site ? new URL(canonicalPath, Astro.site).toString() : undefined
 const socialImageUrl = Astro.site ? new URL(ogImage, Astro.site).toString() : ogImage
-const effectiveStructuredData = structuredData ?? defaultStructuredDataForPage(Astro.site, canonicalPath, title, description)
+const effectiveStructuredData = structuredData ?? (canonicalPath ? defaultStructuredDataForPage(Astro.site, canonicalPath, title, description) : undefined)
 ---
 
 <!doctype html>
