@@ -5,6 +5,7 @@ import './styles.css'
 import './home-calibration.css'
 import './converter-calibration.css'
 import './formats-calibration.css'
+import './compare-calibration.css'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
