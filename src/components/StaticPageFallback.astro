@@ -1,0 +1,149 @@
+---
+interface Props {
+  page: 'home' | 'converter' | 'formats' | 'compare' | 'security'
+}
+
+const { page } = Astro.props
+
+const pageCopy = {
+  home: {
+    eyebrow: '100% processed locally',
+    title: 'Understand your AI credentials.',
+    description: 'Inspect, compare and convert OAuth tokens, API keys, Sub2API and New API formats locally in your browser.',
+  },
+  converter: {
+    eyebrow: 'Local-first tool',
+    title: 'Credential Converter',
+    description: 'Convert OAuth tokens, API keys, and supported credential schemas locally while keeping credential material on your device.',
+  },
+  formats: {
+    eyebrow: 'Authentication knowledge base',
+    title: 'Explore Authentication Formats',
+    description: 'Learn the purpose, sensitivity, fields, lifecycle, and compatibility of common AI authentication formats.',
+  },
+  compare: {
+    eyebrow: 'Compatibility knowledge',
+    title: 'Compatibility Matrix',
+    description: 'Compare credential formats and distinguish local extraction, schema mapping, OAuth exchange, self paths, and impossible conversions.',
+  },
+  security: {
+    eyebrow: 'Local-first security model',
+    title: 'Your secret should stay yours.',
+    description: 'AuthAtlas is designed so parsing, masking, normalization, comparison, and export happen in browser memory.',
+  },
+} as const
+
+const current = pageCopy[page]
+---
+
+<div class="app-shell static-fallback">
+  <header class="topbar">
+    <div class="nav-inner">
+      <a class="brand" href="/" aria-label="AuthAtlas home"><span class="brand-glyph"><i></i><b></b></span><span>AuthAtlas</span></a>
+      <nav class="nav-links" aria-label="Main navigation">
+        <a href="/formats">Formats</a>
+        <a href="/converter">Converter</a>
+        <a href="/compare">Compare</a>
+        <a href="/security">Security</a>
+        <a href="https://github.com/1264585648/gpt-converter#readme">Docs</a>
+        <a href="https://github.com/1264585648/gpt-converter">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page-shell inner-page">
+    <section class="content-width static-fallback-hero">
+      <span class="knowledge-pill">{current.eyebrow}</span>
+      <h1>{current.title}</h1>
+      <p>{current.description}</p>
+    </section>
+
+    {page === 'home' && (
+      <section class="content-width static-fallback-grid">
+        <article><h2>Local-first processing</h2><p>Credential inspection and compatible schema mapping run in the browser.</p></article>
+        <article><h2>Supported formats</h2><p>Explore OAuth access tokens, refresh tokens, API keys, Sub2API, New API, and AuthAtlas Canonical format.</p></article>
+        <article><h2>Compatibility matrix</h2><p>See whether a path is extraction, schema mapping, OAuth exchange, self, or impossible.</p></article>
+      </section>
+    )}
+
+    {page === 'converter' && (
+      <section class="content-width static-fallback-grid">
+        <article><h2>Auto-detect credentials</h2><p>Recognize supported OAuth token, API key, and structured credential input before mapping.</p></article>
+        <article><h2>Map supported schemas</h2><p>Normalize compatible credential material without inventing missing secret fields.</p></article>
+        <article><h2>Keep secrets local</h2><p>Local mappings do not require a credential conversion backend.</p></article>
+      </section>
+    )}
+
+    {page === 'formats' && (
+      <section class="content-width static-fallback-grid">
+        <article><h2>Access Token</h2><p>Short-lived credential used to access protected resources.</p></article>
+        <article><h2>Refresh Token</h2><p>Long-lived OAuth credential used to obtain new access tokens.</p></article>
+        <article><h2>API Key</h2><p>Provider-issued secret used to authenticate API clients.</p></article>
+        <article><h2>Sub2API</h2><p>Gateway-side account wrapper for upstream credentials.</p></article>
+        <article><h2>New API</h2><p>Provider or channel configuration for a unified model gateway.</p></article>
+        <article><h2>Canonical Format</h2><p>Provider-agnostic representation used by AuthAtlas for inspection and schema mapping.</p></article>
+      </section>
+    )}
+
+    {page === 'compare' && (
+      <section class="content-width static-fallback-grid">
+        <article><h2>Extract</h2><p>Read compatible target fields locally from material already present in the source.</p></article>
+        <article><h2>Schema Map</h2><p>Translate compatible fields between credential wrapper schemas.</p></article>
+        <article><h2>OAuth Exchange</h2><p>Contact the provider authorization server when a new credential must be issued.</p></article>
+        <article><h2>Impossible</h2><p>Do not fabricate credential material that cannot be derived from the source.</p></article>
+      </section>
+    )}
+
+    {page === 'security' && (
+      <section class="content-width static-fallback-grid">
+        <article><h2>No credential backend</h2><p>Local inspection and schema mapping do not require uploading credentials to AuthAtlas.</p></article>
+        <article><h2>Masked by default</h2><p>Sensitive values are presented with masked previews unless explicitly revealed.</p></article>
+        <article><h2>Remote means remote</h2><p>OAuth exchanges are labeled separately because they require provider network requests.</p></article>
+      </section>
+    )}
+  </main>
+
+  <footer class="footer"><div class="content-width footer-inner"><p>AuthAtlas — local-first AI credential tools.</p></div></footer>
+</div>
+
+<style>
+  .static-fallback-hero {
+    padding-top: 5rem;
+    padding-bottom: 2rem;
+  }
+
+  .static-fallback-hero h1 {
+    margin: 1rem 0;
+    font-size: clamp(2.5rem, 6vw, 5rem);
+  }
+
+  .static-fallback-hero p {
+    max-width: 760px;
+    font-size: 1.05rem;
+    line-height: 1.7;
+  }
+
+  .static-fallback-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+    padding-bottom: 5rem;
+  }
+
+  .static-fallback-grid article {
+    padding: 1.4rem;
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.025);
+  }
+
+  .static-fallback-grid h2 {
+    margin: 0 0 0.7rem;
+    font-size: 1rem;
+  }
+
+  .static-fallback-grid p {
+    margin: 0;
+    line-height: 1.6;
+  }
+</style>
