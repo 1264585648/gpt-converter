@@ -1,6 +1,7 @@
 ---
 import ClientApp from './ClientApp'
 import BaseLayout from '../layouts/BaseLayout.astro'
+import RouteSeoContent from './RouteSeoContent.astro'
 import StaticPageFallback from './StaticPageFallback.astro'
 import { pageSeo, type PageKey } from '../lib/seo'
 
@@ -22,4 +23,5 @@ const seo = pageSeo[page]
   <ClientApp client:only="react">
     <StaticPageFallback page={page} slot="fallback" />
   </ClientApp>
+  <RouteSeoContent page={page} />
 </BaseLayout>
