@@ -60,7 +60,8 @@ The current site generates 29 indexable content/tool URLs before future guide ex
 | 20 — Route JS Splitting | Complete | Workbench and Formats React code are loaded as separate lazy chunks, so each primary route avoids eagerly loading the other workspace. |
 | 21 — SEO Regression CI | Complete | CI builds with a deterministic site origin and verifies all 29 routes, canonical tags, JSON-LD, robots, sitemap, 404 behavior, favicon/manifest, and absence of legacy hash links. |
 | 22 — Cloudflare Static Headers | Code complete; deployment validation pending | `_headers` is aligned with Astro `/_astro/*` assets, immutable hashed-asset caching, current legacy-route inline script behavior, and browser security policies. Verify final response headers after production deployment. |
-| 23+ | Deployment / data dependent | Production performance review, external authority building, Search Console iteration, automated share assets if useful, and later content expansion remain. |
+| 23 — Frontend Performance Budget | Complete | CI measures generated JS/CSS raw and gzip sizes and fails when conservative chunk or aggregate gzip budgets are exceeded. Tighten budgets after production Core Web Vitals data is available. |
+| 24+ | Deployment / data dependent | Production performance review, external authority building, Search Console iteration, automated share assets if useful, dependency-lock reproducibility, and later content expansion remain. |
 
 ## Structured data coverage
 
@@ -148,6 +149,15 @@ Absolute structured-data URLs are emitted when `PUBLIC_SITE_URL` is configured. 
 - no legacy `href="#/..."` links;
 - Cloudflare `_headers` rules for Astro immutable assets and current security policies.
 
+`npm run verify:performance` measures generated assets and currently enforces:
+
+- largest JavaScript chunk ≤ 220 KiB gzip;
+- total generated JavaScript ≤ 420 KiB gzip;
+- largest CSS asset ≤ 90 KiB gzip;
+- total generated CSS ≤ 160 KiB gzip.
+
+These are pre-production regression budgets rather than Core Web Vitals targets. Recalibrate them after measuring the deployed site.
+
 ## Entity and deployment documentation
 
 - [`ENTITY_POSITIONING.md`](./ENTITY_POSITIONING.md) defines the canonical product description, terminology, GitHub description, topics, and messaging rules.
@@ -172,11 +182,16 @@ These cannot be completed correctly until the production domain is known:
 - Submit the sitemap.
 - Record the initial indexing, impression, click, CTR, ranking, and Core Web Vitals baseline.
 
+## Build reproducibility note
+
+The repository currently does not contain `package-lock.json`, so CI still uses `npm install`. Do not switch the workflow to `npm ci` until a real lockfile has been generated and committed from the declared dependency graph. Once present, use the lockfile for deterministic CI installs and dependency review.
+
 ## Next implementation target
 
 Continue in this order:
 
 1. Remove the obsolete dead `formatItems` / legacy `FormatsPage` source after the replacement workspace has been exercised in deployment previews; route splitting already prevents `/formats` from loading that old workbench chunk.
-2. Apply GitHub description/topics/homepage metadata once repository-metadata write support and the production URL are available.
-3. Run a production performance, response-header, and crawlability review after Cloudflare Pages deployment.
-4. Wait for initial indexing/query data before expanding broad authentication guides.
+2. Generate and commit a real npm lockfile, then change CI from `npm install` to `npm ci`.
+3. Apply GitHub description/topics/homepage metadata once repository-metadata write support and the production URL are available.
+4. Run a production performance, response-header, and crawlability review after Cloudflare Pages deployment.
+5. Wait for initial indexing/query data before expanding broad authentication guides.
