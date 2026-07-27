@@ -1,0 +1,183 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import { credentialFormats, type CredentialFormat } from '../../content/formats'
+
+export function getStaticPaths() {
+  return credentialFormats.map((format) => ({
+    params: { slug: format.slug },
+    props: { format },
+  }))
+}
+
+interface Props {
+  format: CredentialFormat
+}
+
+const { format } = Astro.props
+const related = credentialFormats.filter((entry) => entry.slug !== format.slug).slice(0, 4)
+const title = format.slug === 'canonical'
+  ? 'AuthAtlas Canonical Credential Format — Fields & Conversion | AuthAtlas'
+  : `What Is a ${format.title}? Fields, Security & Conversion | AuthAtlas`
+const description = `${format.shortDescription} Learn its fields, lifecycle, security considerations, and supported credential conversion paths.`
+const canonicalPath = `/formats/${format.slug}`
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonicalPath={canonicalPath}
+  ogImage="/mockups/formats.jpg"
+>
+  <div class="app-shell format-doc-page">
+    <header class="topbar">
+      <div class="nav-inner">
+        <a class="brand" href="/" aria-label="AuthAtlas home"><span class="brand-glyph"><i></i><b></b></span><span>AuthAtlas</span></a>
+        <nav class="nav-links" aria-label="Main navigation">
+          <a class="active" href="/formats">Formats</a>
+          <a href="/converter">Converter</a>
+          <a href="/compare">Compare</a>
+          <a href="/security">Security</a>
+          <a href="https://github.com/1264585648/gpt-converter#readme">Docs</a>
+          <a href="https://github.com/1264585648/gpt-converter">GitHub</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="page-shell inner-page format-doc-main">
+      <article class="content-width format-doc-article">
+        <nav class="doc-breadcrumb" aria-label="Breadcrumb">
+          <a href="/">Home</a><span>›</span><a href="/formats">Formats</a><span>›</span><span>{format.title}</span>
+        </nav>
+
+        <header class="doc-hero">
+          <span class="knowledge-pill">Authentication format</span>
+          <h1>{format.title}</h1>
+          <p class="direct-answer">{format.definition}</p>
+        </header>
+
+        <section aria-labelledby="quick-facts">
+          <h2 id="quick-facts">{format.title} at a glance</h2>
+          <dl class="fact-grid">
+            <div><dt>Sensitivity</dt><dd>{format.sensitivity}</dd></div>
+            <div><dt>Typical lifetime</dt><dd>{format.lifetime}</dd></div>
+            <div><dt>Used for</dt><dd>{format.usedFor}</dd></div>
+            <div><dt>Transport</dt><dd>{format.transport}</dd></div>
+            <div><dt>Revocable</dt><dd>{format.revocable}</dd></div>
+            <div><dt>Rotation</dt><dd>{format.rotation}</dd></div>
+            <div><dt>Storage</dt><dd>{format.storage}</dd></div>
+          </dl>
+        </section>
+
+        <section aria-labelledby="how-it-works">
+          <h2 id="how-it-works">How {format.title} works</h2>
+          <div class="step-grid">
+            <article><strong>1. Identify</strong><p>Recognize the credential or wrapper and inspect the fields that are actually present.</p></article>
+            <article><strong>2. Normalize</strong><p>Represent compatible credential material in AuthAtlas Canonical format without changing the secret itself.</p></article>
+            <article><strong>3. Map safely</strong><p>Map only fields supported by the target schema, and use provider exchange flows when a new credential must be issued.</p></article>
+          </div>
+        </section>
+
+        <section class="two-column" aria-labelledby="fields">
+          <div>
+            <h2 id="fields">Typical fields</h2>
+            <ul class="field-list">
+              {format.fields.map((field) => <li><code>{field}</code></li>)}
+            </ul>
+          </div>
+          <div>
+            <h2>Example structure</h2>
+            <pre><code>{format.example}</code></pre>
+          </div>
+        </section>
+
+        <section aria-labelledby="conversion">
+          <h2 id="conversion">Conversion compatibility</h2>
+          <p>{format.conversions}</p>
+          <div class="doc-actions">
+            <a class="button primary" href="/converter">Open Credential Converter</a>
+            <a class="button secondary" href="/compare">View Compatibility Matrix</a>
+          </div>
+        </section>
+
+        <section aria-labelledby="security">
+          <h2 id="security">Security considerations</h2>
+          <ul class="security-list">
+            {format.security.map((note) => <li>{note}</li>)}
+          </ul>
+        </section>
+
+        <section aria-labelledby="questions">
+          <h2 id="questions">Common questions</h2>
+          <div class="faq-list">
+            {format.faq.map((item) => (
+              <article>
+                <h3>{item.question}</h3>
+                <p>{item.answer}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section aria-labelledby="related-formats">
+          <h2 id="related-formats">Related credential formats</h2>
+          <div class="related-grid">
+            {related.map((entry) => (
+              <a href={`/formats/${entry.slug}`}>
+                <strong>{entry.title}</strong>
+                <span>{entry.shortDescription}</span>
+              </a>
+            ))}
+          </div>
+        </section>
+
+        {format.references.length > 0 && (
+          <section aria-labelledby="references">
+            <h2 id="references">References</h2>
+            <ul class="reference-list">
+              {format.references.map((reference) => (
+                <li><a href={reference.url} rel="noreferrer">{reference.label}</a></li>
+              ))}
+            </ul>
+          </section>
+        )}
+      </article>
+    </main>
+
+    <footer class="footer">
+      <div class="content-width footer-inner">
+        <a class="brand" href="/">AuthAtlas</a>
+        <p>Local-first AI credential inspection and format conversion.</p>
+        <nav><a href="/formats">All formats</a><a href="/security">Security</a></nav>
+      </div>
+    </footer>
+  </div>
+</BaseLayout>
+
+<style>
+  .format-doc-main { padding-bottom: 5rem; }
+  .format-doc-article { max-width: 980px; padding-top: 2rem; }
+  .doc-breadcrumb { display: flex; gap: .65rem; align-items: center; color: var(--text-muted, #8e9ab3); font-size: .9rem; margin-bottom: 3rem; }
+  .doc-breadcrumb a { color: inherit; text-decoration: none; }
+  .doc-hero { max-width: 840px; margin-bottom: 4rem; }
+  .doc-hero h1 { font-size: clamp(2.8rem, 7vw, 5.5rem); margin: 1rem 0 1.25rem; letter-spacing: -.04em; }
+  .direct-answer { font-size: 1.2rem; line-height: 1.75; color: var(--text-secondary, #b9c2d6); }
+  .format-doc-article section { margin: 4rem 0; }
+  .format-doc-article h2 { margin-bottom: 1.25rem; font-size: 1.55rem; }
+  .format-doc-article h3 { margin: 0 0 .5rem; font-size: 1rem; }
+  .format-doc-article p, .format-doc-article li { line-height: 1.7; }
+  .fact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1px; padding: 1px; border-radius: 16px; overflow: hidden; background: rgba(255,255,255,.08); }
+  .fact-grid div { padding: 1.1rem 1.25rem; background: #0a0e1a; }
+  .fact-grid dt { color: #8590a8; font-size: .78rem; text-transform: uppercase; letter-spacing: .06em; }
+  .fact-grid dd { margin: .4rem 0 0; font-weight: 650; }
+  .step-grid, .related-grid, .faq-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1rem; }
+  .step-grid article, .faq-list article, .related-grid a { padding: 1.25rem; border: 1px solid rgba(255,255,255,.08); border-radius: 14px; background: rgba(255,255,255,.025); }
+  .related-grid a { display: flex; flex-direction: column; gap: .5rem; color: inherit; text-decoration: none; }
+  .related-grid span { color: #8f9ab1; line-height: 1.5; }
+  .two-column { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); gap: 2rem; align-items: start; }
+  .field-list, .security-list, .reference-list { padding-left: 1.2rem; }
+  .field-list li, .security-list li { margin: .55rem 0; }
+  pre { overflow-x: auto; margin: 0; padding: 1.25rem; border: 1px solid rgba(255,255,255,.08); border-radius: 14px; background: #070a12; line-height: 1.65; }
+  .doc-actions { display: flex; gap: .8rem; flex-wrap: wrap; margin-top: 1.5rem; }
+  .reference-list a { color: #a99cff; }
+  @media (max-width: 760px) { .two-column { grid-template-columns: 1fr; } .format-doc-article { padding-top: 1rem; } }
+</style>
