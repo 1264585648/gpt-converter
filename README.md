@@ -1,8 +1,8 @@
 # AuthAtlas
 
-AuthAtlas is a local-first AI authentication format explorer, credential inspector, and schema converter.
+AuthAtlas is a local-first AI credential inspector and format converter for OAuth tokens, API keys, Sub2API, New API, and related gateway credential formats.
 
-It helps developers understand OAuth access tokens, refresh tokens, API keys, and gateway-specific wrappers such as Sub2API and New API configurations, while keeping credential inspection and schema mapping in the browser.
+It helps developers understand credential structure, security, compatibility, and conversion paths while keeping supported inspection and schema mapping in the browser.
 
 ## Architecture
 
@@ -86,11 +86,22 @@ npm run build
 
 The generated `dist/` directory can be deployed directly to Cloudflare Pages.
 
+### SEO environment
+
+Copy `.env.example` when configuring a production build and set the public origin:
+
+```bash
+PUBLIC_SITE_URL=https://your-domain.example
+```
+
+`PUBLIC_SITE_URL` is used by Astro to generate self-referencing canonical URLs, `og:url`, and absolute social preview image URLs. Local builds may omit it.
+
 ### Cloudflare Pages settings
 
 - Build command: `npm run build`
 - Build output directory: `dist`
 - Output mode: static Astro site
+- Environment variable: `PUBLIC_SITE_URL=https://<production-domain>`
 
 No Cloudflare SSR adapter is required for the current architecture because credential handling remains browser-side.
 
