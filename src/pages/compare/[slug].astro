@@ -1,0 +1,185 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import { comparePages, type ComparisonPage, type ConversionPage } from '../../content/compare'
+
+export function getStaticPaths() {
+  return comparePages.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }))
+}
+
+interface Props {
+  entry: ConversionPage | ComparisonPage
+}
+
+const { entry } = Astro.props
+const isConversion = entry.type === 'conversion'
+const title = isConversion
+  ? `${entry.title} — Credential Conversion Guide | AuthAtlas`
+  : `${entry.title} — Authentication Comparison | AuthAtlas`
+const description = entry.directAnswer
+const canonicalPath = `/compare/${entry.slug}`
+const related = comparePages.filter((item) => item.slug !== entry.slug).slice(0, 4)
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  canonicalPath={canonicalPath}
+  ogImage="/mockups/compare.jpg"
+>
+  <div class="app-shell compare-doc-page">
+    <header class="topbar">
+      <div class="nav-inner">
+        <a class="brand" href="/" aria-label="AuthAtlas home"><span class="brand-glyph"><i></i><b></b></span><span>AuthAtlas</span></a>
+        <nav class="nav-links" aria-label="Main navigation">
+          <a href="/formats">Formats</a>
+          <a href="/converter">Converter</a>
+          <a class="active" href="/compare">Compare</a>
+          <a href="/security">Security</a>
+          <a href="https://github.com/1264585648/gpt-converter#readme">Docs</a>
+          <a href="https://github.com/1264585648/gpt-converter">GitHub</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="page-shell inner-page compare-doc-main">
+      <article class="content-width compare-doc-article">
+        <nav class="doc-breadcrumb" aria-label="Breadcrumb">
+          <a href="/">Home</a><span>›</span><a href="/compare">Compare</a><span>›</span><span>{entry.title}</span>
+        </nav>
+
+        <header class="doc-hero">
+          <span class="knowledge-pill">{isConversion ? 'Conversion path' : 'Credential comparison'}</span>
+          <h1>{isConversion ? `${entry.source} → ${entry.target}` : entry.title}</h1>
+          <p class="direct-answer">{entry.directAnswer}</p>
+        </header>
+
+        {isConversion ? (
+          <>
+            <section aria-labelledby="conversion-facts">
+              <h2 id="conversion-facts">Conversion facts</h2>
+              <dl class="fact-grid">
+                <div><dt>Source</dt><dd>{entry.source}</dd></div>
+                <div><dt>Target</dt><dd>{entry.target}</dd></div>
+                <div><dt>Conversion type</dt><dd>{entry.kind}</dd></div>
+                <div><dt>Local operation</dt><dd>{entry.local ? 'Yes' : 'No'}</dd></div>
+              </dl>
+            </section>
+
+            <section aria-labelledby="why-path">
+              <h2 id="why-path">What this path means</h2>
+              <p>{entry.summary}</p>
+            </section>
+
+            <section class="two-column">
+              <div>
+                <h2>Requirements</h2>
+                <ul>{entry.requirements.map((item) => <li>{item}</li>)}</ul>
+              </div>
+              <div>
+                <h2>Can it be done locally?</h2>
+                <p>{entry.local ? 'Yes. This path can operate on credential material already present in the source without asking a provider to issue a new credential.' : 'No. This path requires interaction with the credential issuer or authorization server because the target must be newly issued.'}</p>
+              </div>
+            </section>
+
+            <section aria-labelledby="conversion-steps">
+              <h2 id="conversion-steps">How the conversion works</h2>
+              <ol class="step-list">{entry.steps.map((step) => <li>{step}</li>)}</ol>
+            </section>
+
+            <section class="two-column">
+              <div>
+                <h2>Limitations</h2>
+                <ul>{entry.limitations.map((item) => <li>{item}</li>)}</ul>
+              </div>
+              <div>
+                <h2>Security notes</h2>
+                <ul>{entry.security.map((item) => <li>{item}</li>)}</ul>
+              </div>
+            </section>
+
+            <section aria-labelledby="format-links">
+              <h2 id="format-links">Source and target formats</h2>
+              <div class="action-row">
+                {entry.sourceFormatSlug && <a class="button secondary" href={`/formats/${entry.sourceFormatSlug}`}>Read {entry.source}</a>}
+                {entry.targetFormatSlug && <a class="button secondary" href={`/formats/${entry.targetFormatSlug}`}>Read {entry.target}</a>}
+                <a class="button primary" href="/converter">Open Credential Converter</a>
+              </div>
+            </section>
+          </>
+        ) : (
+          <>
+            <section aria-labelledby="comparison-table">
+              <h2 id="comparison-table">{entry.left} compared with {entry.right}</h2>
+              <div class="comparison-table-wrap">
+                <table>
+                  <thead><tr><th>Aspect</th><th>{entry.left}</th><th>{entry.right}</th></tr></thead>
+                  <tbody>
+                    {entry.rows.map((row) => <tr><th>{row.aspect}</th><td>{row.left}</td><td>{row.right}</td></tr>)}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <section aria-labelledby="comparison-guidance">
+              <h2 id="comparison-guidance">Practical guidance</h2>
+              <ul>{entry.guidance.map((item) => <li>{item}</li>)}</ul>
+              <div class="action-row">
+                {entry.leftFormatSlug && <a class="button secondary" href={`/formats/${entry.leftFormatSlug}`}>Read {entry.left}</a>}
+                {entry.rightFormatSlug && <a class="button secondary" href={`/formats/${entry.rightFormatSlug}`}>Read {entry.right}</a>}
+                <a class="button primary" href="/compare">Compatibility Matrix</a>
+              </div>
+            </section>
+          </>
+        )}
+
+        <section aria-labelledby="related-comparisons">
+          <h2 id="related-comparisons">Related comparisons and conversion paths</h2>
+          <div class="related-grid">
+            {related.map((item) => (
+              <a href={`/compare/${item.slug}`}>
+                <strong>{item.title}</strong>
+                <span>{item.type === 'conversion' ? item.kind : 'Comparison'}</span>
+              </a>
+            ))}
+          </div>
+        </section>
+      </article>
+    </main>
+
+    <footer class="footer"><div class="content-width footer-inner"><a class="brand" href="/">AuthAtlas</a><p>Credential formats, conversion paths, and local-first tooling.</p><nav><a href="/compare">Compare</a><a href="/security">Security</a></nav></div></footer>
+  </div>
+</BaseLayout>
+
+<style>
+  .compare-doc-main { padding-bottom: 5rem; }
+  .compare-doc-article { max-width: 980px; padding-top: 2rem; }
+  .doc-breadcrumb { display: flex; gap: .65rem; align-items: center; color: #8e9ab3; font-size: .9rem; margin-bottom: 3rem; }
+  .doc-breadcrumb a { color: inherit; text-decoration: none; }
+  .doc-hero { max-width: 850px; margin-bottom: 4rem; }
+  .doc-hero h1 { font-size: clamp(2.65rem, 7vw, 5.2rem); margin: 1rem 0 1.25rem; letter-spacing: -.04em; }
+  .direct-answer { font-size: 1.2rem; line-height: 1.75; color: #b9c2d6; }
+  .compare-doc-article section { margin: 4rem 0; }
+  .compare-doc-article h2 { margin-bottom: 1.25rem; font-size: 1.55rem; }
+  .compare-doc-article p, .compare-doc-article li { line-height: 1.7; }
+  .fact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1px; padding: 1px; border-radius: 16px; overflow: hidden; background: rgba(255,255,255,.08); }
+  .fact-grid div { padding: 1.1rem 1.25rem; background: #0a0e1a; }
+  .fact-grid dt { color: #8590a8; font-size: .78rem; text-transform: uppercase; letter-spacing: .06em; }
+  .fact-grid dd { margin: .4rem 0 0; font-weight: 650; }
+  .two-column { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem; }
+  .two-column ul, .step-list { padding-left: 1.2rem; }
+  .two-column li, .step-list li { margin: .65rem 0; }
+  .action-row { display: flex; gap: .8rem; flex-wrap: wrap; margin-top: 1.5rem; }
+  .comparison-table-wrap { overflow-x: auto; border: 1px solid rgba(255,255,255,.08); border-radius: 14px; }
+  table { width: 100%; border-collapse: collapse; min-width: 680px; }
+  th, td { padding: 1rem; text-align: left; border-bottom: 1px solid rgba(255,255,255,.07); vertical-align: top; }
+  thead th { color: #aeb8cc; background: rgba(255,255,255,.025); }
+  tbody th { width: 22%; color: #b7c0d2; }
+  td { color: #98a3b9; line-height: 1.55; }
+  .related-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+  .related-grid a { display: flex; flex-direction: column; gap: .5rem; padding: 1.15rem; border: 1px solid rgba(255,255,255,.08); border-radius: 14px; color: inherit; text-decoration: none; background: rgba(255,255,255,.025); }
+  .related-grid span { color: #8f9ab1; }
+  @media (max-width: 760px) { .two-column { grid-template-columns: 1fr; } .compare-doc-article { padding-top: 1rem; } }
+</style>
