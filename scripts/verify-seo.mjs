@@ -1,5 +1,4 @@
 import { readFile, access, readdir } from 'node:fs/promises'
-import { join } from 'node:path'
 
 const DIST = new URL('../dist/', import.meta.url)
 const ORIGIN = (process.env.PUBLIC_SITE_URL || '').replace(/\/$/, '')
@@ -90,6 +89,13 @@ await access(new URL('site.webmanifest', DIST))
 const home = await read(new URL('index.html', DIST))
 expect(home.includes('href="/favicon.svg"'), 'Home: favicon link missing')
 expect(home.includes('href="/site.webmanifest"'), 'Home: web manifest link missing')
+
+const headers = await read(new URL('_headers', DIST))
+expect(headers.includes('/_astro/*'), '_headers: missing Astro asset cache rule')
+expect(headers.includes('max-age=31556952, immutable'), '_headers: hashed Astro assets are not immutable')
+expect(headers.includes("script-src 'self' 'unsafe-inline'"), '_headers: inline legacy-route redirect would be blocked by CSP')
+expect(headers.includes('X-Frame-Options: DENY'), '_headers: clickjacking protection missing')
+expect(headers.includes('Permissions-Policy:'), '_headers: permissions policy missing')
 
 async function collectHtml(directoryUrl) {
   const entries = await readdir(directoryUrl, { withFileTypes: true })
