@@ -1,5 +1,5 @@
 ---
-import App from '../App'
+import ClientApp from './ClientApp'
 import BaseLayout from '../layouts/BaseLayout.astro'
 import StaticPageFallback from './StaticPageFallback.astro'
 
@@ -13,7 +13,7 @@ const { page, title, description } = Astro.props
 ---
 
 <BaseLayout title={title} description={description}>
-  <App client:only="react">
+  <ClientApp client:only="react">
     <StaticPageFallback page={page} slot="fallback" />
-  </App>
+  </ClientApp>
 </BaseLayout>
