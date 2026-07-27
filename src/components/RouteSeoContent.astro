@@ -1,4 +1,5 @@
 ---
+import { comparisonPages, conversionPages } from '../content/compare'
 import { credentialFormats } from '../content/formats'
 import type { PageKey } from '../lib/seo'
 
@@ -63,6 +64,42 @@ const showFormats = page === 'home' || page === 'formats' || page === 'converter
         <article><h3>Can a refresh token be converted into an access token locally?</h3><p>No. A provider authorization server must exchange the refresh token and issue a new access token.</p></article>
         <article><h3>Can AuthAtlas convert Sub2API and New API formats?</h3><p>Compatible upstream credential material can be schema-mapped when both source and target versions support the required fields. Version-specific schemas still need verification.</p></article>
         <article><h3>Does Canonical Format create new secrets?</h3><p>No. Canonical Format normalizes credential material already present in the source and does not invent missing credentials.</p></article>
+      </div>
+    </section>
+  </>
+)}
+
+{page === 'compare' && (
+  <>
+    <section class="content-width route-seo-section" aria-labelledby="comparison-guides">
+      <div class="route-section-heading">
+        <span class="knowledge-pill">Decision guides</span>
+        <h2 id="comparison-guides">Credential comparisons</h2>
+        <p>Compare authentication models and gateway formats through dedicated pages with direct answers and practical differences.</p>
+      </div>
+      <div class="route-link-grid">
+        {comparisonPages.map((entry) => (
+          <a href={`/compare/${entry.slug}`}>
+            <strong>{entry.title}</strong>
+            <span>Comparison guide</span>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <section class="content-width route-seo-section" aria-labelledby="conversion-guides">
+      <div class="route-section-heading">
+        <span class="knowledge-pill">Conversion paths</span>
+        <h2 id="conversion-guides">Popular credential conversions</h2>
+        <p>See whether a path is local extraction, schema mapping, or requires an OAuth exchange before opening the interactive converter.</p>
+      </div>
+      <div class="route-link-grid">
+        {conversionPages.map((entry) => (
+          <a href={`/compare/${entry.slug}`}>
+            <strong>{entry.title}</strong>
+            <span>{entry.kind} · {entry.local ? 'Local' : 'Provider request required'}</span>
+          </a>
+        ))}
       </div>
     </section>
   </>
