@@ -1,0 +1,65 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import { guides } from '../../content/guides'
+
+const sub2apiGuides = guides.filter((guide) => guide.topic === 'Sub2API')
+const newApiGuides = guides.filter((guide) => guide.topic === 'New API')
+---
+
+<BaseLayout
+  title="AI Credential Guides — Sub2API, New API & Authentication | AuthAtlas"
+  description="Developer guides for Sub2API and New API credential fields, authentication structure, gateway mapping, and credential security."
+  canonicalPath="/guides"
+  ogImage="/mockups/formats.jpg"
+>
+  <div class="app-shell guides-index-page">
+    <header class="topbar"><div class="nav-inner"><a class="brand" href="/" aria-label="AuthAtlas home"><span class="brand-glyph"><i></i><b></b></span><span>AuthAtlas</span></a><nav class="nav-links"><a href="/formats">Formats</a><a href="/converter">Converter</a><a href="/compare">Compare</a><a href="/security">Security</a><a class="active" href="/guides">Guides</a><a href="https://github.com/1264585648/gpt-converter">GitHub</a></nav></div></header>
+
+    <main class="page-shell inner-page">
+      <section class="content-width guide-index-hero">
+        <span class="knowledge-pill">Developer knowledge</span>
+        <h1>AI Credential Guides</h1>
+        <p>Practical documentation for understanding gateway credential fields, schema structure, local conversion, and secret handling.</p>
+      </section>
+
+      <section class="content-width guide-topic" aria-labelledby="sub2api-guides">
+        <div class="guide-topic-heading"><h2 id="sub2api-guides">Sub2API</h2><p>Understand the wrapper, its upstream credential fields, conversion paths, and security model.</p></div>
+        <div class="guide-grid">
+          <a class="guide-card primary-card" href="/formats/sub2api"><strong>Sub2API Format Overview</strong><span>Purpose, common fields, lifecycle, conversion compatibility, and security.</span></a>
+          {sub2apiGuides.map((guide) => <a class="guide-card" href={`/guides/${guide.slug}`}><strong>{guide.title}</strong><span>{guide.description}</span></a>)}
+          <a class="guide-card" href="/compare/sub2api-to-canonical"><strong>Sub2API → Canonical</strong><span>How local extraction separates upstream credentials from gateway wrapper metadata.</span></a>
+          <a class="guide-card" href="/compare/sub2api-to-new-api"><strong>Sub2API → New API</strong><span>Version-aware gateway schema mapping through the Canonical model.</span></a>
+          <a class="guide-card" href="/compare/sub2api-vs-new-api"><strong>Sub2API vs New API</strong><span>Compare the two gateway configuration models and their mapping constraints.</span></a>
+        </div>
+      </section>
+
+      <section class="content-width guide-topic" aria-labelledby="new-api-guides">
+        <div class="guide-topic-heading"><h2 id="new-api-guides">New API</h2><p>Understand channel authentication fields, credential structure, gateway mapping, and secure handling.</p></div>
+        <div class="guide-grid">
+          <a class="guide-card primary-card" href="/formats/new-api"><strong>New API Format Overview</strong><span>Channel configuration, common credential material, compatibility, and security.</span></a>
+          {newApiGuides.map((guide) => <a class="guide-card" href={`/guides/${guide.slug}`}><strong>{guide.title}</strong><span>{guide.description}</span></a>)}
+          <a class="guide-card" href="/compare/new-api-to-canonical"><strong>New API → Canonical</strong><span>Extract recognized channel credentials into one provider-agnostic model.</span></a>
+          <a class="guide-card" href="/compare/new-api-to-sub2api"><strong>New API → Sub2API</strong><span>Map compatible upstream credentials into a verified Sub2API schema.</span></a>
+          <a class="guide-card" href="/compare/sub2api-vs-new-api"><strong>New API vs Sub2API</strong><span>Compare wrapper roles, credential fields, and conversion limitations.</span></a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer"><div class="content-width footer-inner"><a class="brand" href="/">AuthAtlas</a><p>Local-first AI credential knowledge and tools.</p><nav><a href="/formats">Formats</a><a href="/security">Security</a></nav></div></footer>
+  </div>
+</BaseLayout>
+
+<style>
+  .guide-index-hero { padding-top: 5rem; padding-bottom: 3rem; max-width: 960px; }
+  .guide-index-hero h1 { margin: 1rem 0; font-size: clamp(3rem, 7vw, 5.5rem); letter-spacing: -.04em; }
+  .guide-index-hero p { max-width: 760px; color: #98a4ba; font-size: 1.1rem; line-height: 1.7; }
+  .guide-topic { padding: 2rem 0 4rem; }
+  .guide-topic-heading { max-width: 720px; margin-bottom: 1.5rem; }
+  .guide-topic-heading h2 { font-size: 2rem; margin: 0 0 .6rem; }
+  .guide-topic-heading p { color: #909bb1; line-height: 1.65; }
+  .guide-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; }
+  .guide-card { display: flex; flex-direction: column; gap: .65rem; padding: 1.3rem; border: 1px solid rgba(255,255,255,.08); border-radius: 14px; background: rgba(255,255,255,.025); color: inherit; text-decoration: none; }
+  .guide-card:hover { border-color: rgba(167,139,250,.45); background: rgba(167,139,250,.06); }
+  .guide-card span { color: #8f9ab1; line-height: 1.55; }
+  .primary-card { border-color: rgba(167,139,250,.25); }
+</style>
