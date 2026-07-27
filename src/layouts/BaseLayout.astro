@@ -1,0 +1,47 @@
+---
+import '../styles.css'
+import '../home-calibration.css'
+import '../converter-calibration.css'
+import '../formats-calibration.css'
+import '../compare-calibration.css'
+import '../qa-fixes.css'
+import '../a11y-qa.css'
+
+interface Props {
+  title?: string
+  description?: string
+}
+
+const {
+  title = 'AuthAtlas — AI Auth Format Lab',
+  description = 'AuthAtlas — local-first AI authentication format explorer, credential inspector, and schema converter.',
+} = Astro.props
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#060914" />
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/mockups/home.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content="/mockups/home.jpg" />
+    <title>{title}</title>
+    <script is:inline>
+      const route = window.location.hash.replace(/^#\/?/, '').split('?')[0]
+      if (['converter', 'formats', 'compare', 'security'].includes(route)) {
+        window.location.replace(`/${route}${window.location.search}`)
+      }
+    </script>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
